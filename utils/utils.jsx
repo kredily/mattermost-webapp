@@ -162,6 +162,7 @@ export function getChannelURL(channel, teamId) {
 
 export function notifyMe(title, body, channel, teamId, silent) {
     // handle notifications in desktop app >= 4.3.0
+    debugger;
     if (UserAgent.isDesktopApp() && window.desktop && semver.gte(window.desktop.version, '4.3.0')) {
         // get the desktop app to trigger the notification
         window.postMessage(
