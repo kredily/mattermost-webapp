@@ -162,7 +162,6 @@ export function getChannelURL(channel, teamId) {
 
 export function notifyMe(title, body, channel, teamId, silent) {
     // handle notifications in desktop app >= 4.3.0
-    debugger;
     if (UserAgent.isDesktopApp() && window.desktop && semver.gte(window.desktop.version, '4.3.0')) {
         // get the desktop app to trigger the notification
         window.postMessage(
@@ -179,18 +178,35 @@ export function notifyMe(title, body, channel, teamId, silent) {
             window.location.origin
         );
     } else {
-        showNotification({
-            title,
-            body,
-            requireInteraction: false,
-            silent,
-            onClick: () => {
-                window.focus();
-                browserHistory.push(getChannelURL(channel, teamId));
-            },
-        }).catch((error) => {
-            store.dispatch(logError(error));
-        });
+        // hack notification
+        try {
+            if(window.location.origin == window.parent.location.origin) {
+                showNotification({
+                    title,
+                    body,
+                    requireInteraction: false,
+                    silent,
+                    onClick: () => {
+                        window.focus();
+                        browserHistory.push(getChannelURL(channel, teamId));
+                    },
+                }).catch((error) => {
+                    store.dispatch(logError(error));
+                });
+            }
+        }
+        catch(err) {
+            window.parent.postMessage(
+                {
+                    title,
+                    body,
+                    channel,
+                    teamId,
+                    silent,
+                },
+                "*"
+            );
+        }
     }
 }
 
