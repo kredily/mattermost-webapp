@@ -83,33 +83,35 @@ export default class SettingItemMin extends React.PureComponent {
                     <button
                         id={this.props.section + 'Edit'}
                         className='color--link cursor--pointer style--none'
-                        onClick={this.handleUpdateSection}
+                        onClick={!this.props.isUser ? this.handleUpdateSection : ""}
                         ref={this.getEdit}
                         aria-labelledby={this.props.section + 'Title ' + this.props.section + 'Edit'}
                     >
-                        <EditIcon/>
+                        {!this.props.isUser ? <EditIcon/> : ""}
                         {this.props.describe}
                     </button>
                 </div>
             );
         } else if (!this.props.disableOpen) {
-            editButton = (
-                <div className='section-min__edit'>
-                    <button
-                        id={this.props.section + 'Edit'}
-                        className='color--link cursor--pointer style--none text-left'
-                        onClick={this.handleUpdateSection}
-                        ref={this.getEdit}
-                        aria-labelledby={this.props.section + 'Title ' + this.props.section + 'Edit'}
-                    >
-                        <EditIcon/>
-                        <FormattedMessage
-                            id='setting_item_min.edit'
-                            defaultMessage='Edit'
-                        />
-                    </button>
-                </div>
-            );
+            if (!this.props.isUser) {
+                editButton = (
+                    <div className='section-min__edit'>
+                        <button
+                            id={this.props.section + 'Edit'}
+                            className='color--link cursor--pointer style--none text-left'
+                            onClick={!this.props.isUser ? this.handleUpdateSection : ""}
+                            ref={this.getEdit}
+                            aria-labelledby={this.props.section + 'Title ' + this.props.section + 'Edit'}
+                        >
+                            {!this.props.isUser ? <EditIcon/> : ""}
+                            <FormattedMessage
+                                id='setting_item_min.edit'
+                                defaultMessage='Edit'
+                            />
+                        </button>
+                    </div>
+                );
+            }
 
             describeSection = (
                 <div

@@ -13,7 +13,7 @@ import {cmdOrCtrlPressed, isKeyPressed} from 'utils/utils';
 import {useSafeUrl} from 'utils/url';
 import * as UserAgent from 'utils/user_agent';
 import InvitationModal from 'components/invitation_modal';
-
+import * as Utils from 'utils/utils.jsx';
 import TeamPermissionGate from 'components/permissions_gates/team_permission_gate';
 import SystemPermissionGate from 'components/permissions_gates/system_permission_gate';
 
@@ -115,7 +115,7 @@ class MainMenu extends React.PureComponent {
 
     render() {
         const {currentUser, teamIsGroupConstrained, isLicensedForLDAPGroups} = this.props;
-
+        const isSysAdmin = Utils.isSystemAdmin(this.props.currentUser.roles);
         if (!currentUser) {
             return null;
         }
@@ -187,14 +187,14 @@ class MainMenu extends React.PureComponent {
                         teamId={this.props.teamId}
                         permissions={[Permissions.ADD_USER_TO_TEAM, Permissions.INVITE_GUEST]}
                     >
-                        <Menu.ItemToggleModalRedux
+                        {isSysAdmin ? <Menu.ItemToggleModalRedux
                             id='invitePeople'
                             modalId={ModalIdentifiers.INVITATION}
                             dialogType={InvitationModal}
                             text={formatMessage({id: 'navbar_dropdown.invitePeople', defaultMessage: 'Invite People'})}
                             extraText={formatMessage({id: 'navbar_dropdown.invitePeopleExtraText', defaultMessage: 'Add or invite people to the team'})}
                             icon={this.props.mobile && <i className='fa fa-user-plus'/>}
-                        />
+                        /> : ""}
                     </TeamPermissionGate>
                 </Menu.Group>
                 <Menu.Group>
@@ -268,14 +268,14 @@ class MainMenu extends React.PureComponent {
                         text={formatMessage({id: 'navbar_dropdown.join', defaultMessage: 'Join Another Team'})}
                         icon={this.props.mobile && <i className='fa fa-plus-square'/>}
                     />
-                    <Menu.ItemToggleModalRedux
+                    {isSysAdmin ? <Menu.ItemToggleModalRedux
                         id='leaveTeam'
                         show={!teamIsGroupConstrained && this.props.experimentalPrimaryTeam !== this.props.teamName}
                         modalId={ModalIdentifiers.LEAVE_TEAM}
                         dialogType={LeaveTeamModal}
                         text={formatMessage({id: 'navbar_dropdown.leave', defaultMessage: 'Leave Team'})}
                         icon={this.props.mobile && <LeaveTeamIcon/>}
-                    />
+                    /> : ""}
                 </Menu.Group>
                 <Menu.Group>
                     {pluginItems}
@@ -350,21 +350,21 @@ class MainMenu extends React.PureComponent {
                         text={formatMessage({id: 'navbar_dropdown.nativeApps', defaultMessage: 'Download Apps'})}
                         icon={this.props.mobile && <i className='fa fa-mobile'/>}
                     />
-                    <Menu.ItemToggleModalRedux
+                    {isSysAdmin ? <Menu.ItemToggleModalRedux
                         id='about'
                         modalId={ModalIdentifiers.ABOUT}
                         dialogType={AboutBuildModal}
                         text={formatMessage({id: 'navbar_dropdown.about', defaultMessage: 'About {appTitle}'}, {appTitle: this.props.siteName || 'Mattermost'})}
                         icon={this.props.mobile && <i className='fa fa-info'/>}
-                    />
+                    /> : "" }
                 </Menu.Group>
                 <Menu.Group>
-                    <Menu.ItemAction
+                    {isSysAdmin ? <Menu.ItemAction
                         id='logout'
                         onClick={this.handleEmitUserLoggedOutEvent}
                         text={formatMessage({id: 'navbar_dropdown.logout', defaultMessage: 'Logout'})}
                         icon={this.props.mobile && <i className='fa fa-sign-out'/>}
-                    />
+                    /> : "" }
                 </Menu.Group>
             </Menu>
         );

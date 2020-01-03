@@ -509,7 +509,7 @@ export default class NotificationsTab extends React.PureComponent {
     render() {
         const serverError = this.state.serverError;
         const user = this.props.user;
-
+        const isSysAdmin = Utils.isSystemAdmin(this.props.user.roles);
         let keysSection;
         if (this.props.activeSection === 'keys') {
             const inputs = [];
@@ -922,18 +922,18 @@ export default class NotificationsTab extends React.PureComponent {
                         active={this.props.activeSection === 'desktop'}
                     />
                     <div className='divider-light'/>
-                    <EmailNotificationSetting
-                        activeSection={this.props.activeSection}
-                        updateSection={this.handleUpdateSection}
-                        enableEmail={this.state.enableEmail === 'true'}
-                        onSubmit={this.handleSubmit}
-                        onCancel={this.handleCancel}
-                        onChange={this.handleEmailRadio}
-                        saving={this.state.isSaving}
-                        serverError={this.state.serverError}
-                    />
+                    {isSysAdmin ? <EmailNotificationSetting
+                            activeSection={this.props.activeSection}
+                            updateSection={this.handleUpdateSection}
+                            enableEmail={this.state.enableEmail === 'true'}
+                            onSubmit={this.handleSubmit}
+                            onCancel={this.handleCancel}
+                            onChange={this.handleEmailRadio}
+                            saving={this.state.isSaving}
+                            serverError={this.state.serverError}
+                        /> : ""}
                     <div className='divider-light'/>
-                    {pushNotificationSection}
+                    {isSysAdmin ? pushNotificationSection : ""}
                     <div className='divider-light'/>
                     {keysSection}
                     <div className='divider-light'/>
