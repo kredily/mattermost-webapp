@@ -14,6 +14,7 @@ import MemberListTeam from 'components/member_list_team';
 import InvitationModal from 'components/invitation_modal';
 
 import {ModalIdentifiers} from 'utils/constants';
+import * as Utils from 'utils/utils.jsx';
 
 const getState = store.getState;
 
@@ -55,9 +56,12 @@ export default class TeamMembersModal extends React.PureComponent {
     }
 
     render() {
-        let teamDisplayName = '';
+        // find if current user is system admin
+        const state = getState();
         const currentUser = getCurrentUser(state);
         const isSysAdmin = Utils.isSystemAdmin(currentUser.roles);
+
+        let teamDisplayName = '';
         if (this.props.currentTeam) {
             teamDisplayName = this.props.currentTeam.display_name;
         }
