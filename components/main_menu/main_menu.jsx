@@ -285,12 +285,12 @@ class MainMenu extends React.PureComponent {
                         teamId={this.props.teamId}
                         permissions={[Permissions.MANAGE_SLASH_COMMANDS, Permissions.MANAGE_OAUTH, Permissions.MANAGE_INCOMING_WEBHOOKS, Permissions.MANAGE_OUTGOING_WEBHOOKS]}
                     >
-                        <Menu.ItemLink
+                        {isSysAdmin ? <Menu.ItemLink
                             id='integrations'
                             show={!this.props.mobile && (this.props.enableIncomingWebhooks || this.props.enableOutgoingWebhooks || this.props.enableCommands || this.props.enableOAuthServiceProvider)}
                             to={'/' + this.props.teamName + '/integrations'}
                             text={formatMessage({id: 'navbar_dropdown.integrations', defaultMessage: 'Integrations'})}
-                        />
+                        /> : ""}
                     </TeamPermissionGate>
                     <TeamPermissionGate
                         teamId={this.props.teamId}

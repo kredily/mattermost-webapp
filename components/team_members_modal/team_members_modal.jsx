@@ -7,12 +7,15 @@ import {Modal} from 'react-bootstrap';
 import {FormattedMessage} from 'react-intl';
 
 import Permissions from 'mattermost-redux/constants/permissions';
+import {getCurrentUser} from 'mattermost-redux/selectors/entities/users';
 
 import TeamPermissionGate from 'components/permissions_gates/team_permission_gate';
 import MemberListTeam from 'components/member_list_team';
 import InvitationModal from 'components/invitation_modal';
 
 import {ModalIdentifiers} from 'utils/constants';
+
+const getState = store.getState;
 
 export default class TeamMembersModal extends React.PureComponent {
     static propTypes = {
@@ -53,6 +56,8 @@ export default class TeamMembersModal extends React.PureComponent {
 
     render() {
         let teamDisplayName = '';
+        const currentUser = getCurrentUser(state);
+        const isSysAdmin = Utils.isSystemAdmin(currentUser.roles);
         if (this.props.currentTeam) {
             teamDisplayName = this.props.currentTeam.display_name;
         }
@@ -84,17 +89,18 @@ export default class TeamMembersModal extends React.PureComponent {
                         teamId={this.props.currentTeam.id}
                         permissions={[Permissions.ADD_USER_TO_TEAM, Permissions.INVITE_GUEST]}
                     >
-                        <button
-                            id='invitePeople'
-                            type='button'
-                            className='btn btn-primary invite-people-btn'
-                            onClick={this.handleInvitePeople}
-                        >
-                            <FormattedMessage
-                                id='team_member_modal.invitePeople'
-                                defaultMessage='Invite People'
-                            />
-                        </button>
+                        {isSysAdmin ? <button
+                                id='invitePeople'
+                                type='button'
+                                className='btn btn-primary invite-people-btn'
+                                onClick={this.handleInvitePeople}
+                            >
+
+                                <FormattedMessage
+                                    id='team_member_modal.invitePeople'
+                                    defaultMessage='Invite People'
+                                />
+                        </button> : ""}
                     </TeamPermissionGate>
                 </Modal.Header>
                 <Modal.Body>
