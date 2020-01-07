@@ -14,6 +14,7 @@ import MemberListTeam from 'components/member_list_team';
 import InvitationModal from 'components/invitation_modal';
 
 import {ModalIdentifiers} from 'utils/constants';
+import store from 'stores/redux_store.jsx';
 import * as Utils from 'utils/utils.jsx';
 
 const getState = store.getState;
