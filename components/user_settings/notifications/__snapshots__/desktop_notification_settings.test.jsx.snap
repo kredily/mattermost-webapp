@@ -83,7 +83,7 @@ exports[`components/user_settings/notifications/DesktopNotificationSettings shou
             className="margin-top x3"
           >
             <FormattedMessage
-              defaultMessage="Desktop notifications are available on Edge, Firefox, Safari, Chrome and Mattermost Desktop Apps."
+              defaultMessage="Desktop notifications are available on Edge, Firefox, Safari, Chrome."
               id="user.settings.notifications.info"
               values={Object {}}
             />
@@ -146,7 +146,7 @@ exports[`components/user_settings/notifications/DesktopNotificationSettings shou
             className="margin-top x3"
           >
             <FormattedMessage
-              defaultMessage="Notification sounds are available on IE11, Safari, Chrome and Mattermost Desktop Apps."
+              defaultMessage="Notification sounds are available on IE11, Safari, Chrome."
               id="user.settings.notifications.sounds_info"
               values={Object {}}
             />
@@ -247,7 +247,7 @@ exports[`components/user_settings/notifications/DesktopNotificationSettings shou
             className="margin-top x3"
           >
             <FormattedMessage
-              defaultMessage="Desktop notifications are available on Edge, Firefox, Safari, Chrome and Mattermost Desktop Apps."
+              defaultMessage="Desktop notifications are available on Edge, Firefox, Safari, Chrome."
               id="user.settings.notifications.info"
               values={Object {}}
             />
@@ -381,7 +381,7 @@ exports[`components/user_settings/notifications/DesktopNotificationSettings shou
             className="margin-top x3"
           >
             <FormattedMessage
-              defaultMessage="Desktop notifications are available on Edge, Firefox, Safari, Chrome and Mattermost Desktop Apps."
+              defaultMessage="Desktop notifications are available on Edge, Firefox, Safari, Chrome."
               id="user.settings.notifications.info"
               values={Object {}}
             />
@@ -444,7 +444,7 @@ exports[`components/user_settings/notifications/DesktopNotificationSettings shou
             className="margin-top x3"
           >
             <FormattedMessage
-              defaultMessage="Notification sounds are available on IE11, Safari, Chrome and Mattermost Desktop Apps."
+              defaultMessage="Notification sounds are available on IE11, Safari, Chrome."
               id="user.settings.notifications.sounds_info"
               values={Object {}}
             />

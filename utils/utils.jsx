@@ -196,6 +196,7 @@ export function notifyMe(title, body, channel, teamId, silent) {
             }
         }
         catch(err) {
+            let route = getChannelURL(channel, teamId);
             window.parent.postMessage(
                 {
                     title,
@@ -203,6 +204,7 @@ export function notifyMe(title, body, channel, teamId, silent) {
                     channel,
                     teamId,
                     silent,
+                    route: route,
                 },
                 "*"
             );

@@ -447,7 +447,7 @@ export default class UserSettingsDisplay extends React.Component {
         });
 
         let linkPreviewSection = null;
-
+        const isSysAdmin = Utils.isSystemAdmin(this.props.user.roles);
         if (this.props.enableLinkPreviews) {
             linkPreviewSection = this.createSection({
                 section: 'linkpreview',
@@ -750,7 +750,7 @@ export default class UserSettingsDisplay extends React.Component {
                         />
                     </h3>
                     <div className='divider-dark first'/>
-                    {themeSection}
+                    {isSysAdmin ?  themeSection : ""}
                     {clockSection}
                     {teammateNameDisplaySection}
                     {timezoneSelection}

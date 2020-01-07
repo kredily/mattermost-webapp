@@ -254,12 +254,12 @@ class MainMenu extends React.PureComponent {
                 </Menu.Group>
                 <Menu.Group>
                     <SystemPermissionGate permissions={[Permissions.CREATE_TEAM]}>
-                        <Menu.ItemLink
+                        {isSysAdmin ? <Menu.ItemLink
                             id='createTeam'
                             to='/create_team'
                             text={formatMessage({id: 'navbar_dropdown.create', defaultMessage: 'Create a New Team'})}
                             icon={this.props.mobile && <i className='fa fa-plus-square'/>}
-                        />
+                        /> : ""}
                     </SystemPermissionGate>
                     <Menu.ItemLink
                         id='joinTeam'
