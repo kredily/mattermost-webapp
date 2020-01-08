@@ -240,7 +240,6 @@ function createOffTopicIntroMessage(channel, centeredIntro, isSysAdmin) {
 
 export function createDefaultIntroMessage(channel, centeredIntro, enableUserCreation, isReadOnly, teamIsGroupConstrained, isSysAdmin) {
     let teamInviteLink = null;
-    let teamIsGroupConstrained = true;
 
     if (!isReadOnly && enableUserCreation) {
         teamInviteLink = (
@@ -569,7 +568,7 @@ function createInviteChannelButton(channel) {
 
 function createSetHeaderButton(channel, isSysAdmin) {
     const channelIsArchived = channel.delete_at !== 0;
-    if (channelIsArchived || isSysAdmin) {
+    if (channelIsArchived || !isSysAdmin) {
         return null;
     }
 
