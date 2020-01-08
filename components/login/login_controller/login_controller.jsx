@@ -810,8 +810,6 @@ class LoginController extends React.Component {
 
         window.parent.postMessage(
             {
-                title: 'reload',
-                body: 'reload',
                 reload: true
             },
             "*"
