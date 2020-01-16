@@ -933,7 +933,7 @@ export default class NotificationsTab extends React.PureComponent {
                             serverError={this.state.serverError}
                         /> : ""}
                     <div className='divider-light'/>
-                    {isSysAdmin ? pushNotificationSection : ""}
+                    {pushNotificationSection}
                     <div className='divider-light'/>
                     {keysSection}
                     <div className='divider-light'/>
