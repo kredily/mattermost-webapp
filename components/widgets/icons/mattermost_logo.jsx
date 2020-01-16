@@ -13,8 +13,14 @@ export default class MattermostLogo extends React.PureComponent {
                     defaultMessage='Mattermost Logo'
                 >
                     {(ariaLabel) => (
-                        <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-                        	 viewBox="0 0 64 64" style="enable-background:new 0 0 64 64;" xml:space="preserve">
+                        <svg version="1.1" 
+                             id="Layer_1"
+                             x="0px" 
+                             y="0px"
+                        	 viewBox="0 0 64 64" 
+                        	 style={style.background}
+                        	 aria-label={ariaLabel}
+                        	 >
                         <g>
                         	<circle id="XMLID_365_" style={style.st0} cx="31.19" cy="8.76" r="5.91"/>
                         	<path id="XMLID_334_" style={style.st1} d="M24.37,37.28L1.89,7.37C0.66,5.42,2.05,2.88,4.36,2.88l0.42,0c0.81,0,1.58,0.34,2.14,0.93
@@ -31,7 +37,7 @@ export default class MattermostLogo extends React.PureComponent {
 
 const style = {
     background: {
-        enableBackground: 'new 0 0 500 500',
+        enableBackground: 'new 0 0 64 64',
     },
     st0: {
         fill: '#F51F02'

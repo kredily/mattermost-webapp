@@ -106,7 +106,7 @@ export default class NotLoggedIn extends React.PureComponent {
                                 id='company_name'
                                 className='pull-right footer-site-name'
                             >
-                                {'Mattermost'}
+                                {'Kredily'}
                             </span>
                         </div>
                         <div className='col-xs-12'>
@@ -114,7 +114,7 @@ export default class NotLoggedIn extends React.PureComponent {
                                 id='copyright'
                                 className='pull-right footer-link copyright'
                             >
-                                {`© 2015-${new Date().getFullYear()} Mattermost, Inc.`}
+                                {`© PeopleProsper Technologies Pvt. Ltd. 2017`}
                             </span>
                             <span className='pull-right'>
                                 {content}
