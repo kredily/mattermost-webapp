@@ -161,13 +161,13 @@ class MainMenu extends React.PureComponent {
                     />
                 </Menu.Group>
                 <Menu.Group>
-                    <Menu.ItemToggleModalRedux
+                   {isSysAdmin ? <Menu.ItemToggleModalRedux
                         id='accountSettings'
                         modalId={ModalIdentifiers.USER_SETTINGS}
                         dialogType={UserSettingsModal}
                         text={formatMessage({id: 'navbar_dropdown.accountSettings', defaultMessage: 'Account Settings'})}
                         icon={this.props.mobile && <i className='fa fa-cog'/>}
-                    />
+                    /> : ""}
                 </Menu.Group>
                 <Menu.Group>
                     <TeamPermissionGate
@@ -330,12 +330,12 @@ class MainMenu extends React.PureComponent {
                         text={formatMessage({id: 'navbar_dropdown.help', defaultMessage: 'Help'})}
                         icon={this.props.mobile && <i className='fa fa-question'/>}
                     />
-                    <Menu.ItemAction
+                    {isSysAdmin ?  <Menu.ItemAction
                         id='keyboardShortcuts'
                         show={!this.props.mobile}
                         onClick={this.toggleShortcutsModal}
                         text={formatMessage({id: 'navbar_dropdown.keyboardShortcuts', defaultMessage: 'Keyboard Shortcuts'})}
-                    />
+                    /> : ""}
                     <Menu.ItemExternalLink
                         id='reportLink'
                         show={Boolean(this.props.reportAProblemLink)}

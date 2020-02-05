@@ -3508,7 +3508,7 @@
   "user.settings.push_notification.away": "Away or offline",
   "user.settings.push_notification.disabled": "Push notifications are not enabled",
   "user.settings.push_notification.disabled_long": "Push notifications have not been enabled by your System Administrator.",
-  "user.settings.push_notification.info": "Notification alerts are pushed to your mobile device when there is activity in Mattermost.",
+  "user.settings.push_notification.info": "Notification alerts are pushed to your mobile device when there is activity in Reach.",
   "user.settings.push_notification.offline": "Offline",
   "user.settings.push_notification.online": "Online, away or offline",
   "user.settings.push_notification.onlyMentions": "For mentions and direct messages",

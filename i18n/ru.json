@@ -3021,7 +3021,7 @@
   "user.settings.push_notification.away": "Отсутствует или не в сети",
   "user.settings.push_notification.disabled": "Push уведомления отключены",
   "user.settings.push_notification.disabled_long": "Ваш системный администратор не включил Push уведомления.",
-  "user.settings.push_notification.info": "Notification alerts are pushed to your mobile device when there is activity in Mattermost.",
+  "user.settings.push_notification.info": "Notification alerts are pushed to your mobile device when there is activity in Reach.",
   "user.settings.push_notification.offline": "Не в сети",
   "user.settings.push_notification.online": "В сети, нет на месте или не в сети",
   "user.settings.push_notification.onlyMentions": "For mentions and direct messages",
