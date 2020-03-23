@@ -171,39 +171,6 @@ const notifyMe = (title, body, channel, teamId, silent) => (dispatch, getState) 
             window.location.origin
         );
     } else {
-        showNotification({
-            title,
-            body,
-            requireInteraction: false,
-            silent,
-            onClick: () => {
-                window.focus();
-                browserHistory.push(Utils.getChannelURL(getState(), channel, teamId));
-            },
-        }).catch((error) => {
-            dispatch(logError(error));
-        });
-    }
-};
-
-const notifyMe = (title, body, channel, teamId, silent) => (dispatch, getState) => {
-    // handle notifications in desktop app >= 4.3.0
-    if (isDesktopApp() && window.desktop && semver.gte(window.desktop.version, '4.3.0')) {
-        // get the desktop app to trigger the notification
-        window.postMessage(
-            {
-                type: 'dispatch-notification',
-                message: {
-                    title,
-                    body,
-                    channel,
-                    teamId,
-                    silent,
-                },
-            },
-            window.location.origin
-        );
-    } else {
         // hack notification
         try {
             if(window.location.origin == window.parent.location.origin) {

@@ -295,7 +295,8 @@ class MainMenu extends React.PureComponent {
                             show={showIntegrations}
                             to={'/' + this.props.teamName + '/integrations'}
                             text={formatMessage({id: 'navbar_dropdown.integrations', defaultMessage: 'Integrations'})}
-                        /> : ""}
+                            />
+                        : ""}
                     </TeamPermissionGate>
                     <TeamPermissionGate
                         teamId={this.props.teamId}
