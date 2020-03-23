@@ -39,18 +39,24 @@ export default class ChannelIntroMessage extends React.PureComponent {
         enableUserCreation: PropTypes.bool,
         isReadOnly: PropTypes.bool,
         teamIsGroupConstrained: PropTypes.bool,
+        creatorName: PropTypes.string.isRequired,
+        teammate: PropTypes.object.isRequired,
+        teammateName: PropTypes.string,
     };
 
     render() {
         const {
             currentUserId,
             channel,
+            creatorName,
             fullWidth,
             locale,
             enableUserCreation,
             isReadOnly,
             channelProfiles,
             teamIsGroupConstrained,
+            teammate,
+            teammateName,
         } = this.props;
 
         let centeredIntro = '';
@@ -64,7 +70,7 @@ export default class ChannelIntroMessage extends React.PureComponent {
         const isSysAdmin = Utils.isSystemAdmin(currentUser.roles);
 
         if (channel.type === Constants.DM_CHANNEL) {
-            return createDMIntroMessage(channel, centeredIntro, isSysAdmin);
+            return createDMIntroMessage(channel, centeredIntro, teammate, teammateName, isSysAdmin);
         } else if (channel.type === Constants.GM_CHANNEL) {
             return createGMIntroMessage(channel, centeredIntro, channelProfiles, currentUserId, isSysAdmin);
         } else if (channel.name === Constants.DEFAULT_CHANNEL) {
@@ -72,7 +78,7 @@ export default class ChannelIntroMessage extends React.PureComponent {
         } else if (channel.name === Constants.OFFTOPIC_CHANNEL) {
             return createOffTopicIntroMessage(channel, centeredIntro, isSysAdmin);
         } else if (channel.type === Constants.OPEN_CHANNEL || channel.type === Constants.PRIVATE_CHANNEL) {
-            return createStandardIntroMessage(channel, centeredIntro, locale, isSysAdmin);
+            return createStandardIntroMessage(channel, centeredIntro, locale, creatorName, isSysAdmin);
         }
         return null;
     }
@@ -131,16 +137,9 @@ function createGMIntroMessage(channel, centeredIntro, profiles, currentUserId, i
     );
 }
 
-function createDMIntroMessage(channel, centeredIntro, isSysAdmin) {
-    var teammate = Utils.getDirectTeammate(channel.id);
+function createDMIntroMessage(channel, centeredIntro, teammate, teammateName, isSysAdmin) {
     const channelIntroId = 'channelIntro';
-
     if (teammate) {
-        var teammateName = teammate.username;
-        if (teammate.nickname.length > 0) {
-            teammateName = teammate.nickname;
-        }
-
         return (
             <div
                 id={channelIntroId}
@@ -367,9 +366,8 @@ export function createDefaultIntroMessage(channel, centeredIntro, enableUserCrea
     );
 }
 
-function createStandardIntroMessage(channel, centeredIntro, locale, isSysAdmin) {
+function createStandardIntroMessage(channel, centeredIntro, locale, creatorName, isSysAdmin) {
     var uiName = channel.display_name;
-    var creatorName = Utils.getDisplayNameByUserId(channel.creator_id);
     var memberMessage;
     const channelIsArchived = channel.delete_at !== 0;
 
@@ -579,7 +577,7 @@ function createSetHeaderButton(channel, isSysAdmin) {
         >
             {(message) => (
                 <ToggleModalButtonRedux
-                    modalId='editChannelHeaderModal'
+                    modalId={ModalIdentifiers.EDIT_CHANNEL_HEADER}
                     accessibilityLabel={message}
                     className={'intro-links color--link'}
                     dialogType={EditChannelHeaderModal}

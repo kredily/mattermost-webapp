@@ -7,6 +7,7 @@ import {Posts} from 'mattermost-redux/constants';
 import {shallowWithIntl} from 'tests/helpers/intl-test-helper';
 
 import RhsRootPost from 'components/rhs_root_post/rhs_root_post.jsx';
+import EmojiMap from 'utils/emoji_map';
 
 jest.mock('utils/post_utils.jsx', () => ({
     isEdited: jest.fn().mockReturnValue(true),
@@ -53,15 +54,17 @@ describe('components/RhsRootPost', () => {
         channelType: 'O',
         channelDisplayName: 'Test',
         handleCardClick: jest.fn(),
+        shortcutReactToLastPostEmittedFrom: '',
         actions: {
             markPostAsUnread: jest.fn(),
         },
+        emojiMap: new EmojiMap(new Map())
     };
 
     test('should match snapshot', () => {
         const wrapper = shallowWithIntl(
             <RhsRootPost {...baseProps}/>
-        ).dive();
+        );
 
         expect(wrapper).toMatchSnapshot();
     });
@@ -73,7 +76,7 @@ describe('components/RhsRootPost', () => {
         };
         const wrapper = shallowWithIntl(
             <RhsRootPost {...props}/>
-        ).dive();
+        );
 
         expect(wrapper).toMatchSnapshot();
     });
@@ -88,7 +91,7 @@ describe('components/RhsRootPost', () => {
         };
         const wrapper = shallowWithIntl(
             <RhsRootPost {...props}/>
-        ).dive();
+        );
 
         expect(wrapper).toMatchSnapshot();
     });
@@ -104,7 +107,7 @@ describe('components/RhsRootPost', () => {
         };
         const wrapper = shallowWithIntl(
             <RhsRootPost {...props}/>
-        ).dive();
+        );
 
         expect(wrapper).toMatchSnapshot();
     });
@@ -112,7 +115,7 @@ describe('components/RhsRootPost', () => {
     test('should show pointer when alt is held down', () => {
         const wrapper = shallowWithIntl(
             <RhsRootPost {...baseProps}/>
-        ).dive();
+        );
 
         expect(wrapper.find('.post.cursor--pointer').exists()).toBe(false);
 
@@ -121,10 +124,27 @@ describe('components/RhsRootPost', () => {
         expect(wrapper.find('.post.cursor--pointer').exists()).toBe(true);
     });
 
+    test('should not show pointer when alt is held down, but channel is archived', () => {
+        const props = {
+            ...baseProps,
+            channelIsArchived: true,
+        };
+
+        const wrapper = shallowWithIntl(
+            <RhsRootPost {...props}/>
+        );
+
+        expect(wrapper.find('.post.cursor--pointer').exists()).toBe(false);
+
+        wrapper.setState({alt: true});
+
+        expect(wrapper.find('.post.cursor--pointer').exists()).toBe(false);
+    });
+
     test('should call markPostAsUnread when post is alt+clicked on', () => {
         const wrapper = shallowWithIntl(
             <RhsRootPost {...baseProps}/>
-        ).dive();
+        );
 
         wrapper.simulate('click', {altKey: false});
 
@@ -133,5 +153,24 @@ describe('components/RhsRootPost', () => {
         wrapper.simulate('click', {altKey: true});
 
         expect(baseProps.actions.markPostAsUnread).toHaveBeenCalled();
+    });
+
+    test('should not call markPostAsUnread when post is alt+clicked on when channel is archived', () => {
+        const props = {
+            ...baseProps,
+            channelIsArchived: true
+        };
+
+        const wrapper = shallowWithIntl(
+            <RhsRootPost {...props}/>
+        );
+
+        wrapper.simulate('click', {altKey: false});
+
+        expect(props.actions.markPostAsUnread).not.toHaveBeenCalled();
+
+        wrapper.simulate('click', {altKey: true});
+
+        expect(props.actions.markPostAsUnread).not.toHaveBeenCalled();
     });
 });

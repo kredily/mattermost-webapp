@@ -10,13 +10,24 @@
 const appDownloadLink = 'https://about.mattermost.com/downloads/';
 
 describe('Test Tutorial Navigation', () => {
+    let team;
+
     before(() => {
+        cy.apiLogin('sysadmin');
         cy.apiUpdateConfig({
             NativeAppSettings: {
                 AppDownloadLink: appDownloadLink,
             },
+            SupportSettings: {
+                SupportEmail: 'feedback@mattermost.com',
+            },
         });
-        cy.loginAsNewUser({}, [], false);
+        cy.apiGetTeamByName('ad-1').then((res) => {
+            team = res.body;
+
+            cy.apiCreateAndLoginAsNewUser({}, [team.id], false);
+            cy.visit(`/${team.name}/channels/town-square`);
+        });
     });
 
     it('On13989 - Tutorial Navigation and Links', () => {
@@ -80,7 +91,9 @@ describe('Test Tutorial Navigation', () => {
         cy.apiLogout();
 
         // # Create another new user with the tutorial bypass flag set to false.
-        cy.loginAsNewUser({}, [], false);
+        cy.apiLogin('sysadmin');
+        cy.apiCreateAndLoginAsNewUser({}, [team.id], false);
+        cy.visit(`/${team.name}/channels/town-square`);
 
         // * Verify that the first step of the tutorial displays.
         checkStepOne();
@@ -133,7 +146,7 @@ function checkStepTwo() {
 
 function checkStepThree() {
     cy.get('#tutorialIntroThree').should('be.visible').
-        and('contain', 'Invite teammates when you\'re ready.').
+        and('contain', 'Invite Teammates when you\'re ready.').
         and('contain', 'Need anything, just email us at feedback@mattermost.com.').
         and('contain', 'Click "Next" to enter Town Square. This is the first channel teammates see when they sign up. Use it for posting updates everyone needs to know.');
 

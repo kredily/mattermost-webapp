@@ -149,6 +149,10 @@
     .info__value {
         padding-left: 10px;
         word-break: break-word;
+
+        p {
+            white-space: pre-wrap;
+        }
     }
 
     .team-member-list {
@@ -514,6 +518,10 @@
     }
 
     .channel-switch__modal {
+        .suggestion-list {
+            position: relative;
+        }
+
         .modal-content {
             border-radius: 2px;
         }
@@ -570,6 +578,20 @@
         .mentions__name {
             padding: 8px 16px;
         }
+    }
+
+    .suggestion-list--top {
+        bottom: initial;
+        position: absolute;
+    }
+
+    .suggestion-list--bottom {
+        position: absolute;
+    }
+
+    .suggestion-list__content--top {
+        bottom: 0;
+        position: absolute;
     }
 }
 
@@ -784,6 +806,10 @@
                 opacity: 0.5;
                 font-weight: 500;
             }
+            .more-modal__name_count {
+                opacity: 0.6;
+                font-weight: 400;
+            }
         }
     }
 
@@ -838,7 +864,7 @@
             cursor: pointer;
         }
 
-        &:hover:not(.clickable)  {
+        &.more-modal__row--selected  {
             background: v(center-channel-color-05);
 
             .more-modal__actions--round {

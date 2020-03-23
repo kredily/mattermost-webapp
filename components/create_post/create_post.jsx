@@ -9,7 +9,7 @@ import {Posts} from 'mattermost-redux/constants';
 import {sortFileInfos} from 'mattermost-redux/utils/file_utils';
 
 import * as GlobalActions from 'actions/global_actions.jsx';
-import Constants, {StoragePrefixes, ModalIdentifiers} from 'utils/constants';
+import Constants, {StoragePrefixes, ModalIdentifiers, Locations, A11yClassNames} from 'utils/constants';
 import {t} from 'utils/i18n';
 import {
     containsAtChannel,
@@ -18,12 +18,12 @@ import {
     isErrorInvalidSlashCommand,
     splitMessageBasedOnCaretPosition,
 } from 'utils/post_utils.jsx';
-import {getTable, formatMarkdownTableMessage} from 'utils/paste';
+import {getTable, getPlainText, formatMarkdownTableMessage, isGitHubCodeBlock} from 'utils/paste';
 import {intlShape} from 'utils/react_intl';
 import * as UserAgent from 'utils/user_agent';
 import * as Utils from 'utils/utils.jsx';
 
-import ConfirmModal from 'components/confirm_modal.jsx';
+import ConfirmModal from 'components/confirm_modal';
 import EditChannelHeaderModal from 'components/edit_channel_header_modal';
 import EditChannelPurposeModal from 'components/edit_channel_purpose_modal';
 import EmojiPickerOverlay from 'components/emoji_picker/emoji_picker_overlay.jsx';
@@ -35,7 +35,7 @@ import PostDeletedModal from 'components/post_deleted_modal';
 import ResetStatusModal from 'components/reset_status_modal';
 import EmojiIcon from 'components/widgets/icons/emoji_icon';
 import Textbox from 'components/textbox';
-import TextboxLinks from 'components/textbox/textbox_links.jsx';
+import TextboxLinks from 'components/textbox/textbox_links';
 import TutorialTip from 'components/tutorial/tutorial_tip';
 
 import FormattedMarkdownMessage from 'components/formatted_markdown_message.jsx';
@@ -52,7 +52,7 @@ function trimRight(str) {
     return str.replace(/\s*$/, '');
 }
 
-class CreatePost extends React.Component {
+class CreatePost extends React.PureComponent {
     static propTypes = {
 
         /**
@@ -177,8 +177,14 @@ class CreatePost extends React.Component {
          */
         isTimezoneEnabled: PropTypes.bool.isRequired,
 
-        intl: intlShape.isRequired,
+        canPost: PropTypes.bool.isRequired,
 
+        /**
+         * To determine if the current user can send special channel mentions
+         */
+        useChannelMentions: PropTypes.bool.isRequired,
+
+        intl: intlShape.isRequired,
         actions: PropTypes.shape({
 
             /**
@@ -252,8 +258,12 @@ class CreatePost extends React.Component {
              * Function to get the users timezones in the channel
              */
             getChannelTimezones: PropTypes.func.isRequired,
-
             scrollPostListToBottom: PropTypes.func.isRequired,
+
+            /**
+             * Function to set or unset emoji picker for last message
+             */
+            emitShortcutReactToLastPostFrom: PropTypes.func
         }).isRequired,
     }
 
@@ -328,6 +338,11 @@ class CreatePost extends React.Component {
         document.removeEventListener('paste', this.pasteHandler);
         document.removeEventListener('keydown', this.documentKeyHandler);
         this.removeOrientationListeners();
+        if (this.saveDraftFrame) {
+            const channelId = this.props.currentChannel.id;
+            this.props.actions.setDraft(StoragePrefixes.DRAFT + channelId, this.draftsForChannel[channelId]);
+            cancelAnimationFrame(this.saveDraftFrame);
+        }
     }
 
     updatePreview = (newState) => {
@@ -479,6 +494,7 @@ class CreatePost extends React.Component {
             postError: null,
         });
 
+        cancelAnimationFrame(this.saveDraftFrame);
         this.props.actions.setDraft(StoragePrefixes.DRAFT + channelId, null);
         this.draftsForChannel[channelId] = null;
 
@@ -523,7 +539,7 @@ class CreatePost extends React.Component {
         } = this.props;
 
         const currentMembersCount = this.props.currentChannelMembersCount;
-        const notificationsToChannel = this.props.enableConfirmNotificationsToChannel;
+        const notificationsToChannel = this.props.enableConfirmNotificationsToChannel && this.props.useChannelMentions;
         if (notificationsToChannel &&
             currentMembersCount > Constants.NOTIFY_ALL_MEMBERS &&
             containsAtChannel(this.state.message)) {
@@ -609,6 +625,9 @@ class CreatePost extends React.Component {
         post.parent_id = this.state.parentId;
         post.metadata = {};
         post.props = {};
+        if (!this.props.useChannelMentions && containsAtChannel(post.message, {checkAllMentions: true})) {
+            post.props.mentionHighlightDisabled = true;
+        }
         const hookResult = await actions.runMessageWillBePostedHooks(post);
 
         if (hookResult.error) {
@@ -706,8 +725,10 @@ class CreatePost extends React.Component {
             ...this.props.draft,
             message,
         };
-
-        this.props.actions.setDraft(StoragePrefixes.DRAFT + channelId, draft);
+        cancelAnimationFrame(this.saveDraftFrame);
+        this.saveDraftFrame = requestAnimationFrame(() => {
+            this.props.actions.setDraft(StoragePrefixes.DRAFT + channelId, draft);
+        });
         this.draftsForChannel[channelId] = draft;
     }
 
@@ -715,7 +736,6 @@ class CreatePost extends React.Component {
         if (!e.clipboardData || !e.clipboardData.items || e.target.id !== 'post_textbox') {
             return;
         }
-
         const table = getTable(e.clipboardData);
         if (!table) {
             return;
@@ -723,8 +743,12 @@ class CreatePost extends React.Component {
 
         e.preventDefault();
 
-        const message = formatMarkdownTableMessage(table, this.state.message.trim());
-
+        let message = '';
+        if (isGitHubCodeBlock(table.className)) {
+            message = '```\n' + getPlainText(e.clipboardData) + '\n```';
+        } else {
+            message = formatMarkdownTableMessage(table, this.state.message.trim());
+        }
         this.setState({message});
     }
 
@@ -824,8 +848,8 @@ class CreatePost extends React.Component {
                     uploadsInProgress,
                 };
 
-                if (this.refs.fileUpload && this.refs.fileUpload.getWrappedInstance() && this.refs.fileUpload.getWrappedInstance().getWrappedInstance()) {
-                    this.refs.fileUpload.getWrappedInstance().getWrappedInstance().cancelUpload(id);
+                if (this.refs.fileUpload && this.refs.fileUpload.getWrappedInstance()) {
+                    this.refs.fileUpload.getWrappedInstance().cancelUpload(id);
                 }
             }
         } else {
@@ -862,10 +886,17 @@ class CreatePost extends React.Component {
     }
 
     documentKeyHandler = (e) => {
-        if ((e.ctrlKey || e.metaKey) && Utils.isKeyPressed(e, KeyCodes.FORWARD_SLASH)) {
+        const ctrlOrMetaKeyPressed = e.ctrlKey || e.metaKey;
+        const shortcutModalKeyCombo = ctrlOrMetaKeyPressed && Utils.isKeyPressed(e, KeyCodes.FORWARD_SLASH);
+        const lastMessageReactionKeyCombo = ctrlOrMetaKeyPressed && e.shiftKey && Utils.isKeyPressed(e, KeyCodes.BACK_SLASH);
+
+        if (shortcutModalKeyCombo) {
             e.preventDefault();
 
             GlobalActions.toggleShortcutsModal();
+            return;
+        } else if (lastMessageReactionKeyCombo) {
+            this.reactToLastMessage(e);
             return;
         }
 
@@ -967,6 +998,22 @@ class CreatePost extends React.Component {
     loadNextMessage = (e) => {
         e.preventDefault();
         this.props.actions.moveHistoryIndexForward(Posts.MESSAGE_TYPES.POST).then(() => this.fillMessageFromHistory());
+    }
+
+    reactToLastMessage = (e) => {
+        e.preventDefault();
+
+        const {rhsExpanded, actions: {emitShortcutReactToLastPostFrom}} = this.props;
+        const noModalsAreOpen = document.getElementsByClassName(A11yClassNames.MODAL).length === 0;
+        const noPopupsDropdownsAreOpen = document.getElementsByClassName(A11yClassNames.POPUP).length === 0;
+
+        // Block keyboard shortcut react to last message when :
+        // - RHS is completely expanded
+        // - Any dropdown/popups are open
+        // - Any modals are open
+        if (!rhsExpanded && noModalsAreOpen && noPopupsDropdownsAreOpen) {
+            emitShortcutReactToLastPostFrom(Locations.CENTER);
+        }
     }
 
     handleBlur = () => {
@@ -1083,8 +1130,9 @@ class CreatePost extends React.Component {
             draft,
             fullWidthTextBox,
             showTutorialTip,
-            readOnlyChannel,
+            canPost,
         } = this.props;
+        const readOnlyChannel = this.props.readOnlyChannel || !canPost;
         const {formatMessage} = this.props.intl;
         const members = currentChannelMembersCount - 1;
         const {renderScrollbar} = this.state;
@@ -1093,7 +1141,7 @@ class CreatePost extends React.Component {
         const notifyAllTitle = (
             <FormattedMessage
                 id='notify_all.title.confirm'
-                defaultMessage='Confirm sending notifications to entire channel'
+                defaultMessage='Confirm Sending Notifications to Entire Channel'
             />
         );
 
@@ -1284,6 +1332,7 @@ class CreatePost extends React.Component {
                                 preview={this.state.showPreview}
                                 badConnection={this.props.badConnection}
                                 listenForMentionKeyClick={true}
+                                useChannelMentions={this.props.useChannelMentions}
                             />
                             <span
                                 ref='createPostControls'
@@ -1315,6 +1364,7 @@ class CreatePost extends React.Component {
                     </div>
                     <div
                         id='postCreateFooter'
+                        role='form'
                         className={postFooterClassName}
                     >
                         <div className='d-flex justify-content-between'>

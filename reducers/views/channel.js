@@ -46,6 +46,11 @@ function lastChannelViewTime(state = {}, action) {
         }
         return state;
     }
+    case ActionTypes.UPDATE_CHANNEL_LAST_VIEWED_AT: {
+        const nextState = {...state};
+        nextState[action.channel_id] = action.last_viewed_at;
+        return nextState;
+    }
 
     case ActionTypes.POST_UNREAD_SUCCESS: {
         const data = action.data;
@@ -111,13 +116,6 @@ function keepChannelIdAsUnread(state = null, action) {
         }
 
         return null;
-    }
-
-    case ActionTypes.RECEIVED_FOCUSED_POST: {
-        if (state && action.channelId !== state.id) {
-            return null;
-        }
-        return state;
     }
 
     case UserTypes.LOGOUT_SUCCESS:

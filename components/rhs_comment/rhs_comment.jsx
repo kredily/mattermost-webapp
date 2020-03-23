@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import {FormattedMessage, injectIntl} from 'react-intl';
-import {OverlayTrigger, Tooltip} from 'react-bootstrap';
+import {Tooltip} from 'react-bootstrap';
 import {Posts} from 'mattermost-redux/constants/index';
 import {
     isPostEphemeral,
@@ -17,6 +17,7 @@ import {intlShape} from 'utils/react_intl';
 import {isMobile} from 'utils/utils.jsx';
 import DotMenu from 'components/dot_menu';
 import FileAttachmentListContainer from 'components/file_attachment_list';
+import OverlayTrigger from 'components/overlay_trigger';
 import PostProfilePicture from 'components/post_profile_picture';
 import FailedPostOptions from 'components/post_view/failed_post_options';
 import PostFlagIcon from 'components/post_view/post_flag_icon';
@@ -52,9 +53,24 @@ class RhsComment extends React.PureComponent {
         isConsecutivePost: PropTypes.bool,
         handleCardClick: PropTypes.func,
         a11yIndex: PropTypes.number,
+
+        /**
+         * To Check if the current post is last in the list of RHS
+         */
+        isLastPost: PropTypes.bool,
+
+        /**
+         * To check if the state of emoji for last message and from where it was emitted
+         */
+        shortcutReactToLastPostEmittedFrom: PropTypes.string,
         intl: intlShape.isRequired,
         actions: PropTypes.shape({
             markPostAsUnread: PropTypes.func.isRequired,
+
+            /**
+             * Function to set or unset emoji picker for last message
+             */
+            emitShortcutReactToLastPostFrom: PropTypes.func
         }),
     };
 
@@ -71,6 +87,8 @@ class RhsComment extends React.PureComponent {
             a11yActive: false,
             currentAriaLabel: '',
         };
+
+        this.postHeaderRef = React.createRef();
     }
 
     componentDidMount() {
@@ -82,6 +100,7 @@ class RhsComment extends React.PureComponent {
             this.postRef.current.addEventListener(A11yCustomEventTypes.DEACTIVATE, this.handleA11yDeactivateEvent);
         }
     }
+
     componentWillUnmount() {
         document.removeEventListener('keydown', this.handleAlt);
         document.removeEventListener('keyup', this.handleAlt);
@@ -92,9 +111,47 @@ class RhsComment extends React.PureComponent {
         }
     }
 
-    componentDidUpdate() {
+    componentDidUpdate(prevProps) {
+        const {shortcutReactToLastPostEmittedFrom, isLastPost} = this.props;
+
         if (this.state.a11yActive) {
             this.postRef.current.dispatchEvent(new Event(A11yCustomEventTypes.UPDATE));
+        }
+
+        const shortcutReactToLastPostEmittedFromRHS = prevProps.shortcutReactToLastPostEmittedFrom !== shortcutReactToLastPostEmittedFrom &&
+        shortcutReactToLastPostEmittedFrom === Locations.RHS_ROOT;
+        if (shortcutReactToLastPostEmittedFromRHS) {
+            // Opening the emoji picker when more than one post in rhs is present
+            this.handleShortcutReactToLastPost(isLastPost);
+        }
+    }
+
+    handleShortcutReactToLastPost = (isLastPost) => {
+        if (isLastPost) {
+            const {isReadOnly, channelIsArchived, enableEmojiPicker, post,
+                actions: {emitShortcutReactToLastPostFrom}} = this.props;
+
+            // Setting the last message emoji action to empty to clean up the redux state
+            emitShortcutReactToLastPostFrom(Locations.NO_WHERE);
+
+            // Following are the types of posts on which adding reaction is not possible
+            const isDeletedPost = post && post.state === Posts.POST_DELETED;
+            const isEphemeralPost = post && isPostEphemeral(post);
+            const isSystemMessage = post && PostUtils.isSystemMessage(post);
+            const isAutoRespondersPost = post && PostUtils.fromAutoResponder(post);
+            const isFailedPost = post && post.failed;
+
+            // Checking if rhs comment is in scroll view of the user
+            const boundingRectOfPostInfo = this.postHeaderRef.current.getBoundingClientRect();
+            const isPostHeaderVisibleToUser = (boundingRectOfPostInfo.top - 110) > 0 &&
+                boundingRectOfPostInfo.bottom < (window.innerHeight);
+
+            if (isPostHeaderVisibleToUser && !isEphemeralPost && !isSystemMessage && !isReadOnly && !isFailedPost &&
+                !isAutoRespondersPost && !isDeletedPost && !channelIsArchived && !isMobile() && enableEmojiPicker) {
+                this.setState({hover: true}, () => {
+                    this.toggleEmojiPicker();
+                });
+            }
         }
     }
 
@@ -164,7 +221,7 @@ class RhsComment extends React.PureComponent {
             className += ' same--user';
         }
 
-        if (this.state.alt) {
+        if (this.state.alt && !this.props.channelIsArchived) {
             className += ' cursor--pointer';
         }
 
@@ -172,7 +229,9 @@ class RhsComment extends React.PureComponent {
     };
 
     handleAlt = (e) => {
-        this.setState({alt: e.altKey});
+        if (this.state.alt !== e.altKey) {
+            this.setState({alt: e.altKey});
+        }
     }
 
     handleDropdownOpened = (isOpened) => {
@@ -202,6 +261,10 @@ class RhsComment extends React.PureComponent {
     }
 
     handlePostClick = (e) => {
+        if (this.props.channelIsArchived) {
+            return;
+        }
+
         if (e.altKey) {
             this.props.actions.markPostAsUnread(this.props.post);
         }
@@ -470,7 +533,10 @@ class RhsComment extends React.PureComponent {
                         {profilePicture}
                     </div>
                     <div>
-                        <div className='post__header'>
+                        <div
+                            className='post__header'
+                            ref={this.postHeaderRef}
+                        >
                             <div className='col col__name'>
                                 {userProfile}
                                 {botIndicator}
