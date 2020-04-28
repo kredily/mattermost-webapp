@@ -123,7 +123,7 @@ export default class TextboxLinks extends React.PureComponent {
             <div className={'help__text ' + helpTextClass}>
                 {helpText}
                 {previewLink}
-                <Link
+                {/*<Link
                     target='_blank'
                     rel='noopener noreferrer'
                     to='/help/messaging'
@@ -133,7 +133,7 @@ export default class TextboxLinks extends React.PureComponent {
                         id='textbox.help'
                         defaultMessage='Help'
                     />
-                </Link>
+                </Link>*/}
             </div>
         );
     }

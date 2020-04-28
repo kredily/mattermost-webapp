@@ -6,6 +6,7 @@ import {FormattedDate, FormattedMessage} from 'react-intl';
 import PropTypes from 'prop-types';
 
 import {Permissions} from 'mattermost-redux/constants';
+import {getCurrentUser} from 'mattermost-redux/selectors/entities/users';
 
 import {Constants, ModalIdentifiers} from 'utils/constants';
 import ChannelInviteModal from 'components/channel_invite_modal';
@@ -24,6 +25,9 @@ import AddGroupsToTeamModal from 'components/add_groups_to_team_modal';
 
 import {getMonthLong} from 'utils/i18n.jsx';
 import * as Utils from 'utils/utils.jsx';
+import store from 'stores/redux_store.jsx';
+
+const getState = store.getState;
 
 export default class ChannelIntroMessage extends React.PureComponent {
     static propTypes = {
@@ -60,22 +64,27 @@ export default class ChannelIntroMessage extends React.PureComponent {
             centeredIntro = 'channel-intro--centered';
         }
 
+        // find if current user is system admin
+        const state = getState();
+        const currentUser = getCurrentUser(state);
+        const isSysAdmin = Utils.isSystemAdmin(currentUser.roles);
+
         if (channel.type === Constants.DM_CHANNEL) {
-            return createDMIntroMessage(channel, centeredIntro, teammate, teammateName);
+            return createDMIntroMessage(channel, centeredIntro, teammate, teammateName, isSysAdmin);
         } else if (channel.type === Constants.GM_CHANNEL) {
-            return createGMIntroMessage(channel, centeredIntro, channelProfiles, currentUserId);
+            return createGMIntroMessage(channel, centeredIntro, channelProfiles, currentUserId, isSysAdmin);
         } else if (channel.name === Constants.DEFAULT_CHANNEL) {
-            return createDefaultIntroMessage(channel, centeredIntro, enableUserCreation, isReadOnly, teamIsGroupConstrained);
+            return createDefaultIntroMessage(channel, centeredIntro, enableUserCreation, isReadOnly, teamIsGroupConstrained, isSysAdmin);
         } else if (channel.name === Constants.OFFTOPIC_CHANNEL) {
-            return createOffTopicIntroMessage(channel, centeredIntro);
+            return createOffTopicIntroMessage(channel, centeredIntro, isSysAdmin);
         } else if (channel.type === Constants.OPEN_CHANNEL || channel.type === Constants.PRIVATE_CHANNEL) {
-            return createStandardIntroMessage(channel, centeredIntro, locale, creatorName);
+            return createStandardIntroMessage(channel, centeredIntro, locale, creatorName, isSysAdmin);
         }
         return null;
     }
 }
 
-function createGMIntroMessage(channel, centeredIntro, profiles, currentUserId) {
+function createGMIntroMessage(channel, centeredIntro, profiles, currentUserId, isSysAdmin) {
     const channelIntroId = 'channelIntro';
 
     if (profiles.length > 0) {
@@ -108,7 +117,7 @@ function createGMIntroMessage(channel, centeredIntro, profiles, currentUserId) {
                         }}
                     />
                 </p>
-                {createSetHeaderButton(channel)}
+                {createSetHeaderButton(channel, isSysAdmin)}
             </div>
         );
     }
@@ -128,7 +137,7 @@ function createGMIntroMessage(channel, centeredIntro, profiles, currentUserId) {
     );
 }
 
-function createDMIntroMessage(channel, centeredIntro, teammate, teammateName) {
+function createDMIntroMessage(channel, centeredIntro, teammate, teammateName, isSysAdmin) {
     const channelIntroId = 'channelIntro';
     if (teammate) {
         return (
@@ -161,7 +170,7 @@ function createDMIntroMessage(channel, centeredIntro, teammate, teammateName) {
                         }}
                     />
                 </p>
-                {teammate.is_bot ? null : createSetHeaderButton(channel)}
+                {teammate.is_bot ? null : createSetHeaderButton(channel, isSysAdmin)}
             </div>
         );
     }
@@ -181,9 +190,9 @@ function createDMIntroMessage(channel, centeredIntro, teammate, teammateName) {
     );
 }
 
-function createOffTopicIntroMessage(channel, centeredIntro) {
+function createOffTopicIntroMessage(channel, centeredIntro, isSysAdmin) {
     const isPrivate = channel.type === Constants.PRIVATE_CHANNEL;
-    const children = createSetHeaderButton(channel);
+    const children = createSetHeaderButton(channel, isSysAdmin);
     let setHeaderButton = null;
     if (children) {
         setHeaderButton = (
@@ -228,7 +237,7 @@ function createOffTopicIntroMessage(channel, centeredIntro) {
     );
 }
 
-export function createDefaultIntroMessage(channel, centeredIntro, enableUserCreation, isReadOnly, teamIsGroupConstrained) {
+export function createDefaultIntroMessage(channel, centeredIntro, enableUserCreation, isReadOnly, teamIsGroupConstrained, isSysAdmin) {
     let teamInviteLink = null;
 
     if (!isReadOnly && enableUserCreation) {
@@ -302,7 +311,7 @@ export function createDefaultIntroMessage(channel, centeredIntro, enableUserCrea
 
     let setHeaderButton = null;
     if (!isReadOnly) {
-        const children = createSetHeaderButton(channel);
+        const children = createSetHeaderButton(channel, isSysAdmin);
         if (children) {
             setHeaderButton = (
                 <ChannelPermissionGate
@@ -357,7 +366,7 @@ export function createDefaultIntroMessage(channel, centeredIntro, enableUserCrea
     );
 }
 
-function createStandardIntroMessage(channel, centeredIntro, locale, creatorName) {
+function createStandardIntroMessage(channel, centeredIntro, locale, creatorName, isSysAdmin) {
     var uiName = channel.display_name;
     var memberMessage;
     const channelIsArchived = channel.delete_at !== 0;
@@ -465,7 +474,7 @@ function createStandardIntroMessage(channel, centeredIntro, locale, creatorName)
 
     const isPrivate = channel.type === Constants.PRIVATE_CHANNEL;
     let setHeaderButton = null;
-    const children = createSetHeaderButton(channel);
+    const children = createSetHeaderButton(channel, isSysAdmin);
     if (children) {
         setHeaderButton = (
             <ChannelPermissionGate
@@ -555,9 +564,9 @@ function createInviteChannelButton(channel) {
     );
 }
 
-function createSetHeaderButton(channel) {
+function createSetHeaderButton(channel, isSysAdmin) {
     const channelIsArchived = channel.delete_at !== 0;
-    if (channelIsArchived) {
+    if (channelIsArchived || !isSysAdmin) {
         return null;
     }
 

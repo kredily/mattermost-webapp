@@ -812,6 +812,13 @@ class LoginController extends React.Component {
             }
         }
 
+        window.parent.postMessage(
+            {
+                reload: true
+            },
+            "*"
+        );
+
         return (
             <div>
                 <AnnouncementBar/>

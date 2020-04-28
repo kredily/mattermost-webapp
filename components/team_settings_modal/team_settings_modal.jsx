@@ -9,7 +9,12 @@ import {Modal} from 'react-bootstrap';
 import {FormattedMessage} from 'react-intl';
 
 import * as Utils from 'utils/utils.jsx';
+import store from 'stores/redux_store.jsx';
+
+import {getCurrentUser} from 'mattermost-redux/selectors/entities/users';
+
 const SettingsSidebar = React.lazy(() => import('components/settings_sidebar.tsx'));
+const getState = store.getState;
 
 import TeamSettings from 'components/team_settings';
 
@@ -64,9 +69,14 @@ export default class TeamSettingsModal extends React.Component {
     }
 
     render() {
+        // find if current user is system admin
+        const state = getState();
+        const currentUser = getCurrentUser(state);
+        const isSysAdmin = Utils.isSystemAdmin(currentUser.roles);
+
         const tabs = [];
         tabs.push({name: 'general', uiName: Utils.localizeMessage('team_settings_modal.generalTab', 'General'), icon: 'icon fa fa-cog', iconTitle: Utils.localizeMessage('generic_icons.settings', 'Settings Icon')});
-        tabs.push({name: 'import', uiName: Utils.localizeMessage('team_settings_modal.importTab', 'Import'), icon: 'icon fa fa-upload', iconTitle: Utils.localizeMessage('generic_icons.upload', 'Upload Icon')});
+        isSysAdmin ? tabs.push({name: 'import', uiName: Utils.localizeMessage('team_settings_modal.importTab', 'Import'), icon: 'icon fa fa-upload', iconTitle: Utils.localizeMessage('generic_icons.upload', 'Upload Icon')}) : "";
 
         return (
             <Modal

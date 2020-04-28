@@ -501,7 +501,7 @@ class CreatePost extends React.PureComponent {
         const fasterThanHumanWillClick = 150;
         const forceFocus = (Date.now() - this.lastBlurAt < fasterThanHumanWillClick);
 
-        this.focusTextbox(forceFocus);
+        this.focusTextbox(true);
     }
 
     handleNotifyAllConfirmation = (e) => {
