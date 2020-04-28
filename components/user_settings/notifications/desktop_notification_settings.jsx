@@ -186,7 +186,7 @@ export default class DesktopNotificationSettings extends React.Component {
                     <div className='mt-5'>
                         <FormattedMessage
                             id='user.settings.notifications.info'
-                            defaultMessage='Desktop notifications are available on Edge, Firefox, Safari, Chrome and Mattermost Desktop Apps.'
+                            defaultMessage='Desktop notifications are available on Edge, Firefox, Safari, Chrome.'
                         />
                     </div>
                 </fieldset>

@@ -171,17 +171,36 @@ const notifyMe = (title, body, channel, teamId, silent) => (dispatch, getState) 
             window.location.origin
         );
     } else {
-        showNotification({
-            title,
-            body,
-            requireInteraction: false,
-            silent,
-            onClick: () => {
-                window.focus();
-                browserHistory.push(Utils.getChannelURL(getState(), channel, teamId));
-            },
-        }).catch((error) => {
-            dispatch(logError(error));
-        });
+        // hack notification
+        try {
+            if(window.location.origin == window.parent.location.origin) {
+                showNotification({
+                    title,
+                    body,
+                    requireInteraction: false,
+                    silent,
+                    onClick: () => {
+                        window.focus();
+                        browserHistory.push(Utils.getChannelURL(getState(), channel, teamId));
+                    },
+                }).catch((error) => {
+                    dispatch(logError(error));
+                });
+            }
+        }
+        catch(err) {
+            let route = Utils.getChannelURL(getState(), channel, teamId);
+            window.parent.postMessage(
+                {
+                    title,
+                    body,
+                    channel,
+                    teamId,
+                    silent,
+                    route: route,
+                },
+                "*"
+            );
+        }
     }
-};
+}

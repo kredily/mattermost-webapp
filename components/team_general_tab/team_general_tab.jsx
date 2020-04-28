@@ -17,6 +17,10 @@ import FormattedMarkdownMessage from 'components/formatted_markdown_message';
 
 import {t} from 'utils/i18n.jsx';
 
+import store from 'stores/redux_store.jsx';
+import {getCurrentUser} from 'mattermost-redux/selectors/entities/users';
+const getState = store.getState;
+
 const ACCEPTED_TEAM_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/bmp'];
 
 export default class GeneralTab extends React.Component {
@@ -344,6 +348,11 @@ export default class GeneralTab extends React.Component {
     }
 
     render() {
+        // find if current user is system admin
+        const state = getState();
+        const currentUser = getCurrentUser(state);
+        const isSysAdmin = Utils.isSystemAdmin(currentUser.roles);
+
         const team = this.props.team;
 
         let clientError = null;
@@ -809,15 +818,15 @@ export default class GeneralTab extends React.Component {
                     {descriptionSection}
                     <div className='divider-light'/>
                     {teamIconSection}
-                    {!team.group_constrained &&
+                    {(!team.group_constrained && isSysAdmin) &&
                         <>
                             <div className='divider-light'/>
                             {allowedDomainsSection}
                         </>
                     }
                     <div className='divider-light'/>
-                    {openInviteSection}
-                    {!team.group_constrained &&
+                    {isSysAdmin ? openInviteSection : ""}
+                    {(!team.group_constrained && isSysAdmin) &&
                         <>
                             <div className='divider-light'/>
                             {inviteSection}

@@ -350,12 +350,12 @@ export default class DotMenu extends React.PureComponent {
                         text={Utils.localizeMessage('post_info.unread', 'Mark as Unread')}
                         onClick={this.handleUnreadMenuItemActivated}
                     />
-                    <Menu.ItemAction
+                    {/*<Menu.ItemAction
                         id={`permalink_${this.props.post.id}`}
                         show={!isSystemMessage}
                         text={Utils.localizeMessage('post_info.permalink', 'Copy Link')}
                         onClick={this.copyLink}
-                    />
+                    />*/}
                     <Menu.ItemAction
                         show={isMobile && !isSystemMessage && this.props.isFlagged}
                         text={Utils.localizeMessage('rhs_root.mobile.unflag', 'Unflag')}

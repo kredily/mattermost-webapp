@@ -426,9 +426,9 @@ class UserSettingsGeneralTab extends React.Component {
 
     createEmailSection() {
         const {formatMessage} = this.props.intl;
-
+        const isSysAdmin = Utils.isSystemAdmin(this.props.user.roles);
         let emailSection;
-        if (this.props.activeSection === 'email') {
+        if (this.props.activeSection === 'email' && isSysAdmin) {
             const emailVerificationEnabled = this.props.requireEmailVerification;
             const inputs = [];
 
@@ -641,6 +641,7 @@ class UserSettingsGeneralTab extends React.Component {
                         />
                     }
                     inputs={inputs}
+                    isUser={!isSysAdmin}
                     submit={submit}
                     saving={this.state.sectionIsSaving}
                     serverError={this.state.serverError}
@@ -713,6 +714,7 @@ class UserSettingsGeneralTab extends React.Component {
                         />
                     }
                     describe={describe}
+                    isUser={!isSysAdmin}
                     section={'email'}
                     updateSection={this.updateSection}
                 />
@@ -724,6 +726,7 @@ class UserSettingsGeneralTab extends React.Component {
 
     render() {
         const user = this.props.user;
+        const isSysAdmin = Utils.isSystemAdmin(this.props.user.roles);
         const {formatMessage} = this.props.intl;
 
         let clientError = null;
@@ -738,7 +741,7 @@ class UserSettingsGeneralTab extends React.Component {
         let nameSection;
         const inputs = [];
 
-        if (this.props.activeSection === 'name') {
+        if (this.props.activeSection === 'name' && isSysAdmin) {
             let extraInfo;
             let submit = null;
             if (
@@ -846,6 +849,7 @@ class UserSettingsGeneralTab extends React.Component {
                     title={formatMessage(holders.fullName)}
                     inputs={inputs}
                     submit={submit}
+                    isUser={!isSysAdmin}
                     saving={this.state.sectionIsSaving}
                     serverError={serverError}
                     clientError={clientError}
@@ -882,6 +886,7 @@ class UserSettingsGeneralTab extends React.Component {
             nameSection = (
                 <SettingItemMin
                     title={formatMessage(holders.fullName)}
+                    isUser={!isSysAdmin}
                     describe={describe}
                     section={'name'}
                     updateSection={this.updateSection}
@@ -1073,7 +1078,7 @@ class UserSettingsGeneralTab extends React.Component {
         }
 
         let positionSection;
-        if (this.props.activeSection === 'position') {
+        if (this.props.activeSection === 'position' && isSysAdmin) {
             let extraInfo;
             let submit = null;
             if ((this.props.user.auth_service === Constants.LDAP_SERVICE && this.props.ldapPositionAttributeSet) || (this.props.user.auth_service === Constants.SAML_SERVICE && this.props.samlPositionAttributeSet)) {
@@ -1135,6 +1140,7 @@ class UserSettingsGeneralTab extends React.Component {
                 <SettingItemMax
                     title={formatMessage(holders.position)}
                     inputs={inputs}
+                    isUser={!isSysAdmin}
                     submit={submit}
                     saving={this.state.sectionIsSaving}
                     serverError={serverError}
@@ -1148,25 +1154,28 @@ class UserSettingsGeneralTab extends React.Component {
             if (user.position) {
                 describe = user.position;
             } else {
-                describe = (
+                if(isSysAdmin){
+                    describe = (
                     <FormattedMessage
                         id='user.settings.general.emptyPosition'
                         defaultMessage="Click 'Edit' to add your job title / position"
                     />
-                );
-                if (Utils.isMobile()) {
-                    describe = (
-                        <FormattedMessage
-                            id='user.settings.general.mobile.emptyPosition'
-                            defaultMessage='Click to add your job title / position'
-                        />
                     );
+                    if (Utils.isMobile()) {
+                        describe = (
+                            <FormattedMessage
+                                id='user.settings.general.mobile.emptyPosition'
+                                defaultMessage='Click to add your job title / position'
+                            />
+                        );
+                    }
                 }
             }
 
             positionSection = (
                 <SettingItemMin
                     title={formatMessage(holders.position)}
+                    isUser={!isSysAdmin}
                     describe={describe}
                     section={'position'}
                     updateSection={this.updateSection}
@@ -1283,13 +1292,13 @@ class UserSettingsGeneralTab extends React.Component {
                     <div className='divider-light'/>
                     {usernameSection}
                     <div className='divider-light'/>
-                    {nicknameSection}
+                    {isSysAdmin ? nicknameSection : ""}
                     <div className='divider-light'/>
                     {positionSection}
                     <div className='divider-light'/>
                     {emailSection}
                     <div className='divider-light'/>
-                    {pictureSection}
+                    {isSysAdmin ? pictureSection : ""}
                     <div className='divider-dark'/>
                 </div>
             </div>

@@ -175,13 +175,13 @@ export default class ManageLanguage extends React.Component {
                     />
                     {serverError}
                 </div>
-                <div>
+                {/*<div>
                     <br/>
                     <FormattedMarkdownMessage
                         id='user.settings.languages.promote'
                         defaultMessage='Select which language Mattermost displays in the user interface.\n \nWould you like to help with translations? Join the [Mattermost Translation Server](!http://translate.mattermost.com/) to contribute.'
                     />
-                </div>
+                </div>*/}
             </div>
         );
 

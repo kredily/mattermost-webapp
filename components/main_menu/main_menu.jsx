@@ -13,7 +13,7 @@ import {cmdOrCtrlPressed, isKeyPressed} from 'utils/utils';
 import {useSafeUrl} from 'utils/url';
 import * as UserAgent from 'utils/user_agent';
 import InvitationModal from 'components/invitation_modal';
-
+import * as Utils from 'utils/utils.jsx';
 import TeamPermissionGate from 'components/permissions_gates/team_permission_gate';
 import SystemPermissionGate from 'components/permissions_gates/system_permission_gate';
 
@@ -117,7 +117,7 @@ class MainMenu extends React.PureComponent {
 
     render() {
         const {currentUser, teamIsGroupConstrained, isLicensedForLDAPGroups} = this.props;
-
+        const isSysAdmin = Utils.isSystemAdmin(this.props.currentUser.roles);
         if (!currentUser) {
             return null;
         }
@@ -166,13 +166,13 @@ class MainMenu extends React.PureComponent {
                     />
                 </Menu.Group>
                 <Menu.Group>
-                    <Menu.ItemToggleModalRedux
+                   {isSysAdmin ? <Menu.ItemToggleModalRedux
                         id='accountSettings'
                         modalId={ModalIdentifiers.USER_SETTINGS}
                         dialogType={UserSettingsModal}
                         text={formatMessage({id: 'navbar_dropdown.accountSettings', defaultMessage: 'Account Settings'})}
                         icon={this.props.mobile && <i className='fa fa-cog'/>}
-                    />
+                    /> : ""}
                 </Menu.Group>
                 <Menu.Group>
                     <TeamPermissionGate
@@ -192,14 +192,14 @@ class MainMenu extends React.PureComponent {
                         teamId={this.props.teamId}
                         permissions={[Permissions.ADD_USER_TO_TEAM, Permissions.INVITE_GUEST]}
                     >
-                        <Menu.ItemToggleModalRedux
+                        {isSysAdmin ? <Menu.ItemToggleModalRedux
                             id='invitePeople'
                             modalId={ModalIdentifiers.INVITATION}
                             dialogType={InvitationModal}
                             text={formatMessage({id: 'navbar_dropdown.invitePeople', defaultMessage: 'Invite People'})}
                             extraText={formatMessage({id: 'navbar_dropdown.invitePeopleExtraText', defaultMessage: 'Add or invite people to the team'})}
                             icon={this.props.mobile && <i className='fa fa-user-plus'/>}
-                        />
+                        /> : ""}
                     </TeamPermissionGate>
                 </Menu.Group>
                 <Menu.Group>
@@ -259,12 +259,12 @@ class MainMenu extends React.PureComponent {
                 </Menu.Group>
                 <Menu.Group>
                     <SystemPermissionGate permissions={[Permissions.CREATE_TEAM]}>
-                        <Menu.ItemLink
+                        {isSysAdmin ? <Menu.ItemLink
                             id='createTeam'
                             to='/create_team'
                             text={formatMessage({id: 'navbar_dropdown.create', defaultMessage: 'Create a Team'})}
                             icon={this.props.mobile && <i className='fa fa-plus-square'/>}
-                        />
+                        /> : ""}
                     </SystemPermissionGate>
                     <Menu.ItemLink
                         id='joinTeam'
@@ -273,25 +273,31 @@ class MainMenu extends React.PureComponent {
                         text={formatMessage({id: 'navbar_dropdown.join', defaultMessage: 'Join Another Team'})}
                         icon={this.props.mobile && <i className='fa fa-plus-square'/>}
                     />
-                    <Menu.ItemToggleModalRedux
+                    {isSysAdmin ? <Menu.ItemToggleModalRedux
                         id='leaveTeam'
                         show={!teamIsGroupConstrained && this.props.experimentalPrimaryTeam !== this.props.teamName}
                         modalId={ModalIdentifiers.LEAVE_TEAM}
                         dialogType={LeaveTeamModal}
                         text={formatMessage({id: 'navbar_dropdown.leave', defaultMessage: 'Leave Team'})}
                         icon={this.props.mobile && <LeaveTeamIcon/>}
-                    />
+                    /> : ""}
                 </Menu.Group>
                 <Menu.Group>
                     {pluginItems}
                 </Menu.Group>
                 <Menu.Group>
-                    <Menu.ItemLink
-                        id='integrations'
-                        show={showIntegrations}
-                        to={'/' + this.props.teamName + '/integrations'}
-                        text={formatMessage({id: 'navbar_dropdown.integrations', defaultMessage: 'Integrations'})}
-                    />
+                    <TeamPermissionGate
+                        teamId={this.props.teamId}
+                        permissions={[Permissions.MANAGE_SLASH_COMMANDS, Permissions.MANAGE_OAUTH, Permissions.MANAGE_INCOMING_WEBHOOKS, Permissions.MANAGE_OUTGOING_WEBHOOKS]}
+                    >
+                        {isSysAdmin ? <Menu.ItemLink
+                            id='integrations'
+                            show={showIntegrations}
+                            to={'/' + this.props.teamName + '/integrations'}
+                            text={formatMessage({id: 'navbar_dropdown.integrations', defaultMessage: 'Integrations'})}
+                            />
+                        : ""}
+                    </TeamPermissionGate>
                     <TeamPermissionGate
                         teamId={this.props.teamId}
                         permissions={[Permissions.MANAGE_SYSTEM]}
@@ -330,12 +336,12 @@ class MainMenu extends React.PureComponent {
                         text={formatMessage({id: 'navbar_dropdown.help', defaultMessage: 'Help'})}
                         icon={this.props.mobile && <i className='fa fa-question'/>}
                     />
-                    <Menu.ItemAction
+                    {isSysAdmin ?  <Menu.ItemAction
                         id='keyboardShortcuts'
                         show={!this.props.mobile}
                         onClick={this.toggleShortcutsModal}
                         text={formatMessage({id: 'navbar_dropdown.keyboardShortcuts', defaultMessage: 'Keyboard Shortcuts'})}
-                    />
+                    /> : ""}
                     <Menu.ItemExternalLink
                         id='reportLink'
                         show={Boolean(this.props.reportAProblemLink)}
@@ -350,21 +356,21 @@ class MainMenu extends React.PureComponent {
                         text={formatMessage({id: 'navbar_dropdown.nativeApps', defaultMessage: 'Download Apps'})}
                         icon={this.props.mobile && <i className='fa fa-mobile'/>}
                     />
-                    <Menu.ItemToggleModalRedux
+                    {isSysAdmin ? <Menu.ItemToggleModalRedux
                         id='about'
                         modalId={ModalIdentifiers.ABOUT}
                         dialogType={AboutBuildModal}
                         text={formatMessage({id: 'navbar_dropdown.about', defaultMessage: 'About {appTitle}'}, {appTitle: this.props.siteName || 'Mattermost'})}
                         icon={this.props.mobile && <i className='fa fa-info'/>}
-                    />
+                    /> : "" }
                 </Menu.Group>
                 <Menu.Group>
-                    <Menu.ItemAction
+                    {isSysAdmin ? <Menu.ItemAction
                         id='logout'
                         onClick={this.handleEmitUserLoggedOutEvent}
                         text={formatMessage({id: 'navbar_dropdown.logout', defaultMessage: 'Log Out'})}
                         icon={this.props.mobile && <i className='fa fa-sign-out'/>}
-                    />
+                    /> : "" }
                 </Menu.Group>
             </Menu>
         );
