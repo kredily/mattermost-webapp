@@ -346,14 +346,14 @@ export default class NewChannelModal extends React.PureComponent {
                                         type='text'
                                         ref={this.displayNameInput}
                                         className='form-control'
-                                        placeholder={{id: t('channel_modal.nameEx'), defaultMessage: 'E.g.: "Bugs", "Marketing", "客户支持"'}}
+                                        placeholder={{id: t('channel_modal.nameEx'), defaultMessage: 'E.g.: "Bugs", "Marketing", "Sales", "HR"'}}
                                         maxLength={Constants.MAX_CHANNELNAME_LENGTH}
                                         value={this.props.channelData.displayName}
                                         autoFocus={true}
                                         onKeyDown={this.onEnterKeyDown}
                                     />
                                     {displayNameError}
-                                    <p className='input__help dark'>
+                                    {/*<p className='input__help dark'>
                                         {'URL: ' + prettyTeamURL + this.props.channelData.name + ' ('}
                                         <button
                                             className='color--link style--none'
@@ -365,10 +365,10 @@ export default class NewChannelModal extends React.PureComponent {
                                             />
                                         </button>
                                         {')'}
-                                    </p>
+                                    </p>*/}
                                 </div>
                             </div>
-                            <div className='form-group'>
+                            {/*<div className='form-group'>
                                 <div className='col-sm-3'>
                                     <label
                                         className='form__label control-label'
@@ -442,7 +442,7 @@ export default class NewChannelModal extends React.PureComponent {
                                     </p>
                                     {serverError}
                                 </div>
-                            </div>
+                            </div>*/}
                         </Modal.Body>
                         <Modal.Footer>
                             <button
