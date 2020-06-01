@@ -20,7 +20,7 @@ type State = {
     serverError: string | null;
 }
 
-export default class TeamListDropdown extends React.Component<Props, State> {
+export default class TeamListDropdown extends React.PureComponent<Props, State> {
     public constructor(props: Props) {
         super(props);
 
@@ -51,7 +51,7 @@ export default class TeamListDropdown extends React.Component<Props, State> {
                     <Menu
                         openLeft={true}
                         openUp={false}
-                        ariaLabel={localizeMessage('team_members_dropdown.menuAriaLabel', 'Team member role change')}
+                        ariaLabel={localizeMessage('team_members_dropdown.menuAriaLabel', 'Change the role of a team member')}
                     >
                         <Menu.ItemAction
                             id='makeTeamAdmin'

@@ -18,7 +18,7 @@ const getState = store.getState;
 
 import TeamSettings from 'components/team_settings';
 
-export default class TeamSettingsModal extends React.Component {
+export default class TeamSettingsModal extends React.PureComponent {
     static propTypes = {
         onHide: PropTypes.func,
     };

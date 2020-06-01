@@ -7,6 +7,9 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
+// Stage: @prod
+// Group: @account_setting
+
 import * as TIMEOUTS from '../../../../fixtures/timeouts';
 
 describe('AS14318 Theme Colors - Color Picker', () => {
@@ -42,7 +45,7 @@ describe('AS14318 Theme Colors - Color Picker', () => {
             '#sidebarBg-ChromePickerModal',
             '#sidebarBg-squareColorIconValue',
             '#bb123e',
-            'rgb(187, 18, 62)'
+            'rgb(187, 18, 62)',
         );
     });
 
@@ -54,7 +57,7 @@ describe('AS14318 Theme Colors - Color Picker', () => {
             '#centerChannelBg-ChromePickerModal',
             '#centerChannelBg-squareColorIconValue',
             '#ff8800',
-            'rgb(255, 136, 0)'
+            'rgb(255, 136, 0)',
         );
     });
 
@@ -66,7 +69,7 @@ describe('AS14318 Theme Colors - Color Picker', () => {
             '#linkColor-ChromePickerModal',
             '#linkColor-squareColorIconValue',
             '#ffe577',
-            'rgb(255, 229, 119)'
+            'rgb(255, 229, 119)',
         );
     });
 });

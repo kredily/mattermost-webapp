@@ -7,10 +7,13 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
+// Stage: @prod
+// Group: @guest_account
+
 /**
  * Note: This test requires Enterprise license to be uploaded
  */
-import {getRandomInt} from '../../../utils';
+import {getRandomId} from '../../../utils';
 import users from '../../../fixtures/users.json';
 
 let testTeam;
@@ -111,7 +114,7 @@ describe('Guest Account - Member Invitation Flow', () => {
     });
 
     it('MM-18039 Verify UI Elements of Members Invitation Flow', () => {
-        const email = `temp-${getRandomInt(9999).toString()}@mattermost.com`;
+        const email = `temp-${getRandomId()}@mattermost.com`;
 
         // # Open Invite People
         cy.get('#sidebarHeaderDropdownButton').should('be.visible').click();
@@ -187,7 +190,7 @@ describe('Guest Account - Member Invitation Flow', () => {
 
     it('MM-18040 Verify Invite New/Existing Users', () => {
         // # Login as new user and get the user id
-        cy.createNewUser().then((newUser) => {
+        cy.apiCreateNewUser().then((newUser) => {
             cy.apiAddUserToTeam(testTeam.id, newUser.id);
 
             // # Logout sysadmin, then login as new user
@@ -209,7 +212,7 @@ describe('Guest Account - Member Invitation Flow', () => {
         verifyInvitationSuccess(user1.username, 'This member has been added to the team.');
 
         // # Search and add a new member by email who is not part of the team
-        const email = `temp-${getRandomInt(9999).toString()}@mattermost.com`;
+        const email = `temp-${getRandomId()}@mattermost.com`;
         invitePeople(email, 1, email);
 
         // * Verify the content and message in next screen
@@ -218,7 +221,7 @@ describe('Guest Account - Member Invitation Flow', () => {
 
     it('MM-22037 Invite Member via Email containing upper case letters', () => {
         // # Invite a email containing uppercase letters
-        const email = `tEMp-${getRandomInt(9999)}@mattermost.com`;
+        const email = `tEMp-${getRandomId()}@mattermost.com`;
         invitePeople(email, 1, email);
 
         // * Verify the content and message in next screen
