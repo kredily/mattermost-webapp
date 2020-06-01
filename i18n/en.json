@@ -2015,7 +2015,7 @@
   "channel_modal.headerHelp": "Set text that will appear in the header of the channel beside the channel name. For example, include frequently used links by typing [Link Title](http://example.com).",
   "channel_modal.modalTitle": "New Channel",
   "channel_modal.name": "Name",
-  "channel_modal.nameEx": "E.g.: \"Bugs\", \"Marketing\", \"客户支持\"",
+  "channel_modal.nameEx": "E.g.: \"Bugs\", \"Marketing\", \"Sales\"",
   "channel_modal.optional": "(optional)",
   "channel_modal.privateHint": " - Only invited members can join this channel.",
   "channel_modal.privateName": "Private",

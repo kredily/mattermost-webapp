@@ -144,8 +144,8 @@ export default class NewChannelModal extends React.PureComponent {
     handleChange = () => {
         const newData = {
             displayName: this.displayNameInput.current.value,
-            header: this.channelHeaderInput.current.value,
-            purpose: this.channelPurposeInput.current.value,
+            header: this.channelHeaderInput.current ? this.channelHeaderInput.current.value : "",
+            purpose: this.channelPurposeInput.current ? this.channelPurposeInput.current.value : "",
         };
         this.props.onDataChanged(newData);
     }
@@ -346,7 +346,7 @@ export default class NewChannelModal extends React.PureComponent {
                                         type='text'
                                         ref={this.displayNameInput}
                                         className='form-control'
-                                        placeholder={{id: t('channel_modal.nameEx'), defaultMessage: 'E.g.: "Bugs", "Marketing", "Sales", "HR"'}}
+                                        placeholder={{id: t('channel_modal.nameEx'), defaultMessage: 'E.g.: "Bugs", "Marketing", "Sales"'}}
                                         maxLength={Constants.MAX_CHANNELNAME_LENGTH}
                                         value={this.props.channelData.displayName}
                                         autoFocus={true}

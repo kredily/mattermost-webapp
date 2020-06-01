@@ -492,7 +492,7 @@ export default class MoreDirectChannels extends React.Component<Props, State> {
                 saving={this.state.saving}
                 loading={this.state.loadingUsers}
                 users={this.props.users}
-                {/*totalCount={this.props.totalCount}*/}
+                // totalCount={this.props.totalCount}
                 placeholderText={localizeMessage('multiselect.placeholder', 'Search and add members')}
             />
         );
