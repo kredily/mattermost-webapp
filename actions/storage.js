@@ -29,12 +29,6 @@ export function removeItem(name) {
 }
 
 export function setGlobalItem(name, value) {
-
-    // skip draft based storage
-    if(name.startsWith("draft_") || name.startsWith("comment_draft_")) {
-        return {data: true};
-    }
-
     return (dispatch) => {
         dispatch({
             type: StorageTypes.SET_GLOBAL_ITEM,
