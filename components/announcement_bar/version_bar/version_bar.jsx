@@ -42,6 +42,9 @@ export default class VersionBar extends React.PureComponent {
         const {serverVersionOnAppLoad} = this.state;
         const {serverVersion} = this.props;
 
+        // skip version bar completely
+        return null;
+
         if (!serverVersionOnAppLoad) {
             return null;
         }
