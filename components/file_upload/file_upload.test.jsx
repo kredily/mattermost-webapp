@@ -9,7 +9,6 @@ import {clearFileInput} from 'utils/utils';
 import {shallowWithIntl} from 'tests/helpers/intl-test-helper';
 
 import FileUpload from 'components/file_upload/file_upload.jsx';
-import * as UserAgent from 'utils/user_agent';
 
 const generatedIdRegex = /[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}/;
 
@@ -83,7 +82,7 @@ describe('components/FileUpload', () => {
 
     test('should match snapshot', () => {
         const wrapper = shallowWithIntl(
-            <FileUpload {...baseProps}/>
+            <FileUpload {...baseProps}/>,
         );
 
         expect(wrapper).toMatchSnapshot();
@@ -91,19 +90,16 @@ describe('components/FileUpload', () => {
 
     test('should call onClick when fileInput is clicked', () => {
         const wrapper = shallowWithIntl(
-            <FileUpload {...baseProps}/>
+            <FileUpload {...baseProps}/>,
         );
 
         wrapper.find('input').simulate('click');
         expect(baseProps.onClick).toHaveBeenCalledTimes(1);
     });
 
-    test('should call onClick on fileInput when button is touched when isMobileApp=true', () => {
-        const origIsMobileApp = UserAgent.isMobileApp;
-        UserAgent.isMobileApp = jest.fn().mockImplementation(() => true);
-
+    test('should prevent event default and progogation on call of onTouchEnd on fileInput', () => {
         const wrapper = shallowWithIntl(
-            <FileUpload {...baseProps}/>
+            <FileUpload {...baseProps}/>,
         );
         const instance = wrapper.instance();
         instance.handleLocalFileUploaded = jest.fn();
@@ -112,21 +108,18 @@ describe('components/FileUpload', () => {
                 click: () => instance.handleLocalFileUploaded(),
             },
         };
-        wrapper.find('button').simulate('click');
-        expect(instance.handleLocalFileUploaded).toHaveBeenCalledTimes(0);
 
-        wrapper.find('button').simulate('touchend');
-        expect(instance.handleLocalFileUploaded).toHaveBeenCalledTimes(1);
+        const event = {stopPropagation: jest.fn(), preventDefault: jest.fn()};
+        wrapper.find('button').simulate('touchend', event);
 
-        UserAgent.isMobileApp = origIsMobileApp;
+        expect(event.stopPropagation).toHaveBeenCalled();
+        expect(event.preventDefault).toHaveBeenCalled();
+        expect(instance.handleLocalFileUploaded).toHaveBeenCalled();
     });
 
-    test('should call onClick on fileInput when button is touched when isMobileApp=false', () => {
-        const origIsMobileApp = UserAgent.isMobileApp;
-        UserAgent.isMobileApp = jest.fn().mockImplementation(() => false);
-
+    test('should prevent event default and progogation on call of onClick on fileInput', () => {
         const wrapper = shallowWithIntl(
-            <FileUpload {...baseProps}/>
+            <FileUpload {...baseProps}/>,
         );
         const instance = wrapper.instance();
         instance.handleLocalFileUploaded = jest.fn();
@@ -135,13 +128,13 @@ describe('components/FileUpload', () => {
                 click: () => instance.handleLocalFileUploaded(),
             },
         };
-        wrapper.find('button').simulate('touchend');
-        expect(instance.handleLocalFileUploaded).toHaveBeenCalledTimes(0);
 
-        wrapper.find('button').simulate('click');
-        expect(instance.handleLocalFileUploaded).toHaveBeenCalledTimes(1);
+        const event = {stopPropagation: jest.fn(), preventDefault: jest.fn()};
+        wrapper.find('button').simulate('click', event);
 
-        UserAgent.isMobileApp = origIsMobileApp;
+        expect(event.stopPropagation).toHaveBeenCalled();
+        expect(event.preventDefault).toHaveBeenCalled();
+        expect(instance.handleLocalFileUploaded).toHaveBeenCalled();
     });
 
     test('should match state and call handleMaxUploadReached or props.onClick on handleLocalFileUploaded', () => {
@@ -149,7 +142,7 @@ describe('components/FileUpload', () => {
             <FileUpload
                 {...baseProps}
                 fileCount={4}
-            />
+            />,
         );
 
         const evt = {preventDefault: jest.fn()};
@@ -179,7 +172,7 @@ describe('components/FileUpload', () => {
         };
 
         const wrapper = shallowWithIntl(
-            <FileUpload {...baseProps}/>
+            <FileUpload {...baseProps}/>,
         );
 
         wrapper.instance().fileUploadSuccess(data, 'channel_id', 'root_id');
@@ -197,7 +190,7 @@ describe('components/FileUpload', () => {
         };
 
         const wrapper = shallowWithIntl(
-            <FileUpload {...baseProps}/>
+            <FileUpload {...baseProps}/>,
         );
 
         wrapper.instance().fileUploadFail(params.err, params.clientId, params.channelId, params.rootId);
@@ -220,7 +213,7 @@ describe('components/FileUpload', () => {
         const wrapper = shallowWithIntl(
             <FileUpload
                 {...baseProps}
-            />
+            />,
         );
         jest.spyOn(wrapper.instance(), 'containsEventTarget').mockReturnValue(true);
         const spy = jest.spyOn(wrapper.instance(), 'checkPluginHooksAndUploadFiles');
@@ -238,7 +231,7 @@ describe('components/FileUpload', () => {
         const files = [{name: 'file1.pdf'}, {name: 'file2.jpg'}];
 
         const wrapper = shallowWithIntl(
-            <FileUpload {...baseProps}/>
+            <FileUpload {...baseProps}/>,
         );
 
         wrapper.instance().checkPluginHooksAndUploadFiles(files);
@@ -261,7 +254,7 @@ describe('components/FileUpload', () => {
         const files = [{name: 'file1.pdf'}, {name: 'file2.jpg'}];
 
         const wrapper = shallowWithIntl(
-            <FileUpload {...props}/>
+            <FileUpload {...props}/>,
         );
 
         wrapper.instance().checkPluginHooksAndUploadFiles(files);
@@ -280,7 +273,7 @@ describe('components/FileUpload', () => {
         const files = [{name: 'file1.pdf'}, {name: 'file2.jpg'}];
 
         const wrapper = shallowWithIntl(
-            <FileUpload {...props}/>
+            <FileUpload {...props}/>,
         );
 
         wrapper.instance().checkPluginHooksAndUploadFiles(files);
@@ -297,7 +290,7 @@ describe('components/FileUpload', () => {
         const files = [{name: 'file1.pdf', size: MaxFileSize + 1}];
 
         const wrapper = shallowWithIntl(
-            <FileUpload {...baseProps}/>
+            <FileUpload {...baseProps}/>,
         );
 
         wrapper.instance().checkPluginHooksAndUploadFiles(files);
@@ -312,7 +305,7 @@ describe('components/FileUpload', () => {
 
     test('should functions when handleChange is called', () => {
         const wrapper = shallowWithIntl(
-            <FileUpload {...baseProps}/>
+            <FileUpload {...baseProps}/>,
         );
 
         const e = {target: {files: [{name: 'file1.pdf'}]}};
@@ -332,7 +325,7 @@ describe('components/FileUpload', () => {
 
     test('should functions when handleDrop is called', () => {
         const wrapper = shallowWithIntl(
-            <FileUpload {...baseProps}/>
+            <FileUpload {...baseProps}/>,
         );
 
         const e = {dataTransfer: {files: [{name: 'file1.pdf'}]}};
@@ -358,7 +351,7 @@ describe('components/FileUpload', () => {
         const files = [{name: 'file1.pdf'}, {name: 'file2.jpg'}];
 
         const wrapper = shallowWithIntl(
-            <FileUpload {...props}/>
+            <FileUpload {...props}/>,
         );
 
         wrapper.instance().checkPluginHooksAndUploadFiles(files);
@@ -379,7 +372,7 @@ describe('components/FileUpload', () => {
         const files = [{name: 'file1.pdf'}, {name: 'file2.jpg'}];
 
         const wrapper = shallowWithIntl(
-            <FileUpload {...props}/>
+            <FileUpload {...props}/>,
         );
 
         wrapper.instance().checkPluginHooksAndUploadFiles(files);

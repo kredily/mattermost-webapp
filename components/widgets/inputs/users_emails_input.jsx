@@ -24,7 +24,7 @@ import {isGuest} from 'utils/utils';
 
 import './users_emails_input.scss';
 
-export default class UsersEmailsInput extends React.Component {
+export default class UsersEmailsInput extends React.PureComponent {
     static propTypes = {
         placeholder: PropTypes.string,
         ariaLabel: PropTypes.string.isRequired,
@@ -95,7 +95,7 @@ export default class UsersEmailsInput extends React.Component {
     }
 
     formatOptionLabel = (user, options) => {
-        const profileImg = imageURLForUser(user);
+        const profileImg = imageURLForUser(user.id, user.last_picture_update);
         let guestBadge = null;
         if (!isEmail(user.value) && isGuest(user)) {
             guestBadge = <GuestBadge/>;

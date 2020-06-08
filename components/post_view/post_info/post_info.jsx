@@ -118,7 +118,7 @@ export default class PostInfo extends React.PureComponent {
             /**
              * Function to set or unset emoji picker for last message
              */
-            emitShortcutReactToLastPostFrom: PropTypes.func
+            emitShortcutReactToLastPostFrom: PropTypes.func,
         }).isRequired,
 
         shouldShowDotMenu: PropTypes.bool.isRequired,
@@ -129,7 +129,7 @@ export default class PostInfo extends React.PureComponent {
 
         this.state = {
             showEmojiPicker: false,
-            showOptionsMenuWithoutHover: false
+            showOptionsMenuWithoutHover: false,
         };
 
         this.postHeaderRef = React.createRef();
@@ -140,7 +140,7 @@ export default class PostInfo extends React.PureComponent {
 
         this.setState({
             showEmojiPicker,
-            showOptionsMenuWithoutHover: false
+            showOptionsMenuWithoutHover: false,
         });
         this.props.handleDropdownOpened(showEmojiPicker || this.state.showDotMenu);
     };
@@ -219,6 +219,7 @@ export default class PostInfo extends React.PureComponent {
                     handleCommentClick={this.props.handleCommentClick}
                     handleDropdownOpened={this.handleDotMenuOpened}
                     handleAddReactionClick={this.toggleEmojiPicker}
+                    isMenuOpen={this.state.showDotMenu}
                     isReadOnly={isReadOnly}
                     enableEmojiPicker={this.props.enableEmojiPicker}
                 />
@@ -228,7 +229,8 @@ export default class PostInfo extends React.PureComponent {
         return (
             <div
                 ref='dotMenu'
-                className={'col col__reply'}
+                data-testid={`post-menu-${post.id}`}
+                className={'col post-menu'}
             >
                 {dotMenu}
                 {postReaction}
@@ -260,7 +262,7 @@ export default class PostInfo extends React.PureComponent {
             if (isPostHeaderVisibleToUser && !isEphemeralPost && !isSystemMessage && !isAutoRespondersPost &&
                     !isFailedPost && !isDeletedPost && !isReadOnly && !isMobile && enableEmojiPicker) {
                 this.setState({
-                    showOptionsMenuWithoutHover: true
+                    showOptionsMenuWithoutHover: true,
                 }, () => {
                     this.toggleEmojiPicker();
                 });
@@ -313,7 +315,7 @@ export default class PostInfo extends React.PureComponent {
                     }
                 >
                     <button
-                        className={'card-icon__container icon--show style--none ' + (this.props.isCardOpen ? 'active' : '')}
+                        className={'post-menu__item post-menu__item--show ' + (this.props.isCardOpen ? 'active' : '')}
                         onClick={(e) => {
                             e.preventDefault();
                             this.props.handleCardClick(this.props.post);

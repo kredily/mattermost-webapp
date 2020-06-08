@@ -84,7 +84,7 @@ type State = {
     loadingUsers: boolean;
 }
 
-export default class MoreDirectChannels extends React.Component<Props, State> {
+export default class MoreDirectChannels extends React.PureComponent<Props, State> {
     searchTimeoutId: any;
     exitToChannel?: string;
     multiselect: React.RefObject<MultiSelect<OptionType>>;
@@ -150,7 +150,7 @@ export default class MoreDirectChannels extends React.Component<Props, State> {
                         this.resetPaging();
                         this.setUsersLoadingState(false);
                     },
-                    Constants.SEARCH_TIMEOUT_MILLISECONDS
+                    Constants.SEARCH_TIMEOUT_MILLISECONDS,
                 );
             }
         }
@@ -492,7 +492,7 @@ export default class MoreDirectChannels extends React.Component<Props, State> {
                 saving={this.state.saving}
                 loading={this.state.loadingUsers}
                 users={this.props.users}
-                totalCount={this.props.totalCount}
+                // totalCount={this.props.totalCount}
                 placeholderText={localizeMessage('multiselect.placeholder', 'Search and add members')}
             />
         );

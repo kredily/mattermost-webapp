@@ -23,7 +23,7 @@ export function formatWithRenderer(text: string, renderer: marked.Renderer) {
         sanitize: true,
         gfm: true,
         tables: true,
-        mangle: false
+        mangle: false,
     };
 
     return marked(text, markdownOptions).trim();
@@ -32,7 +32,7 @@ export function formatWithRenderer(text: string, renderer: marked.Renderer) {
 export function stripMarkdown(text: string) {
     if (typeof text === 'string' && text.length > 0) {
         return convertEntityToCharacter(
-            formatWithRenderer(text, removeMarkdown)
+            formatWithRenderer(text, removeMarkdown),
         ).trim();
     }
 

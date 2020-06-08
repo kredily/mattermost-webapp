@@ -15,7 +15,7 @@ import MenuWrapper from 'components/widgets/menu/menu_wrapper';
 
 const ROWS_FROM_BOTTOM_TO_OPEN_UP = 3;
 
-export default class TeamMembersDropdown extends React.Component {
+export default class TeamMembersDropdown extends React.PureComponent {
     static propTypes = {
         user: PropTypes.object.isRequired,
         currentUser: PropTypes.object.isRequired,
@@ -252,7 +252,7 @@ export default class TeamMembersDropdown extends React.Component {
                     <Menu
                         openLeft={true}
                         openUp={openUp}
-                        ariaLabel={Utils.localizeMessage('team_members_dropdown.menuAriaLabel', 'Team member role change')}
+                        ariaLabel={Utils.localizeMessage('team_members_dropdown.menuAriaLabel', 'Change the role of a team member')}
                     >
                         <Menu.ItemAction
                             id='removeFromTeam'
