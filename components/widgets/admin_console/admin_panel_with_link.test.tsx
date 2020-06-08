@@ -24,13 +24,14 @@ describe('components/widgets/admin_console/AdminPanelWithLink', () => {
         const wrapper = shallow(
             <AdminPanelWithLink {...defaultProps}>
                 {'Test'}
-            </AdminPanelWithLink>
+            </AdminPanelWithLink>,
         );
         expect(wrapper).toMatchInlineSnapshot(`
 <AdminPanel
   button={
     <Link
       className="btn btn-primary"
+      data-testid="test-id-link"
       onClick={[Function]}
       to="/path"
     >
@@ -42,6 +43,7 @@ describe('components/widgets/admin_console/AdminPanelWithLink', () => {
     </Link>
   }
   className="AdminPanelWithLink test-class-name"
+  data-testid="test-id"
   id="test-id"
   subtitleDefault="test-subtitle-default"
   subtitleId="test-subtitle-id"
@@ -50,7 +52,7 @@ describe('components/widgets/admin_console/AdminPanelWithLink', () => {
 >
   Test
 </AdminPanel>
-`
+`,
         );
     });
 
@@ -61,13 +63,14 @@ describe('components/widgets/admin_console/AdminPanelWithLink', () => {
                 disabled={true}
             >
                 {'Test'}
-            </AdminPanelWithLink>
+            </AdminPanelWithLink>,
         );
         expect(wrapper).toMatchInlineSnapshot(`
 <AdminPanel
   button={
     <Link
       className="btn btn-primary"
+      data-testid="test-id-link"
       onClick={[Function]}
       to="/path"
     >
@@ -79,6 +82,7 @@ describe('components/widgets/admin_console/AdminPanelWithLink', () => {
     </Link>
   }
   className="AdminPanelWithLink test-class-name"
+  data-testid="test-id"
   id="test-id"
   subtitleDefault="test-subtitle-default"
   subtitleId="test-subtitle-id"
@@ -87,7 +91,7 @@ describe('components/widgets/admin_console/AdminPanelWithLink', () => {
 >
   Test
 </AdminPanel>
-`
+`,
         );
     });
 });

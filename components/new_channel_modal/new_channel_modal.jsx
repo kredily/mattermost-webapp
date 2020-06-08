@@ -144,8 +144,8 @@ export default class NewChannelModal extends React.PureComponent {
     handleChange = () => {
         const newData = {
             displayName: this.displayNameInput.current.value,
-            header: this.channelHeaderInput.current.value,
-            purpose: this.channelPurposeInput.current.value,
+            header: this.channelHeaderInput.current ? this.channelHeaderInput.current.value : "",
+            purpose: this.channelPurposeInput.current ? this.channelPurposeInput.current.value : "",
         };
         this.props.onDataChanged(newData);
     }
@@ -178,7 +178,7 @@ export default class NewChannelModal extends React.PureComponent {
                 <p className='input__help error'>
                     <FormattedMessage
                         id='channel_modal.displayNameError'
-                        defaultMessage='Channel name must be 2 or more characters'
+                        defaultMessage='Display name must have at least 2 characters.'
                     />
                     {this.state.displayNameError}
                 </p>
@@ -210,7 +210,7 @@ export default class NewChannelModal extends React.PureComponent {
                 />
                 <FormattedMessage
                     id='channel_modal.publicHint'
-                    defaultMessage=' - Anyone can join this channel.'
+                    defaultMessage=' - Anyone can join this channel'
                 />
             </div>
         );
@@ -224,7 +224,7 @@ export default class NewChannelModal extends React.PureComponent {
                 />
                 <FormattedMessage
                     id='channel_modal.privateHint'
-                    defaultMessage=' - Only invited members can join this channel.'
+                    defaultMessage=' - Only invited members can join this channel'
                 />
             </div>
         );
@@ -346,14 +346,14 @@ export default class NewChannelModal extends React.PureComponent {
                                         type='text'
                                         ref={this.displayNameInput}
                                         className='form-control'
-                                        placeholder={{id: t('channel_modal.nameEx'), defaultMessage: 'E.g.: "Bugs", "Marketing", "客户支持"'}}
+                                        placeholder={{id: t('channel_modal.nameEx'), defaultMessage: 'E.g.: "Bugs", "Marketing", "Sales"'}}
                                         maxLength={Constants.MAX_CHANNELNAME_LENGTH}
                                         value={this.props.channelData.displayName}
                                         autoFocus={true}
                                         onKeyDown={this.onEnterKeyDown}
                                     />
                                     {displayNameError}
-                                    <p className='input__help dark'>
+                                    {/*<p className='input__help dark'>
                                         {'URL: ' + prettyTeamURL + this.props.channelData.name + ' ('}
                                         <button
                                             className='color--link style--none'
@@ -365,10 +365,10 @@ export default class NewChannelModal extends React.PureComponent {
                                             />
                                         </button>
                                         {')'}
-                                    </p>
+                                    </p>*/}
                                 </div>
                             </div>
-                            <div className='form-group'>
+                            {/*<div className='form-group'>
                                 <div className='col-sm-3'>
                                     <label
                                         className='form__label control-label'
@@ -442,7 +442,7 @@ export default class NewChannelModal extends React.PureComponent {
                                     </p>
                                     {serverError}
                                 </div>
-                            </div>
+                            </div>*/}
                         </Modal.Body>
                         <Modal.Footer>
                             <button

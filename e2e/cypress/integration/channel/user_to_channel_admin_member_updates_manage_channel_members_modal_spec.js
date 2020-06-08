@@ -7,6 +7,9 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
+// Stage: @prod
+// Group: @channel
+
 import users from '../../fixtures/users.json';
 
 const demoteToMember = (user) => {
@@ -21,7 +24,7 @@ const demoteToChannelMember = (user, channelId) => {
         data: {
             scheme_user: true,
             scheme_admin: false,
-        }
+        },
     });
 };
 
@@ -33,7 +36,7 @@ const promoteToChannelAdmin = (user, channelId) => {
         data: {
             scheme_user: true,
             scheme_admin: true,
-        }
+        },
     });
 };
 

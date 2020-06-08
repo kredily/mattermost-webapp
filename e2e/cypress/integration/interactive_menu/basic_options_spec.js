@@ -7,6 +7,9 @@
 // - Use element ID when selecting an element. Create one if none.
 // ***************************************************************
 
+// Stage: @prod @smoke
+// Group: @interactive_menu
+
 /**
 * Note: This test requires webhook server running. Initiate `npm run start:webhook` to start.
 */
@@ -32,16 +35,6 @@ describe('Interactive Menu', () => {
 
         // # Login as sysadmin
         cy.apiLogin('sysadmin');
-
-        // Set required ServiceSettings
-        const newSettings = {
-            ServiceSettings: {
-                AllowedUntrustedInternalConnections: 'localhost',
-                EnablePostUsernameOverride: true,
-                EnablePostIconOverride: true,
-            },
-        };
-        cy.apiUpdateConfig(newSettings);
 
         // # Update teammate name display setting is set to default 'username'
         cy.apiSaveTeammateNameDisplayPreference('username');
@@ -150,7 +143,7 @@ describe('Interactive Menu', () => {
             cy.getLastPostId().then((replyMessageId) => {
                 // * Verify that the reply is in the channel view with matching text
                 cy.get(`#post_${replyMessageId}`).within(() => {
-                    cy.get('.post__link').should('be.visible').and('have.text', `Commented on webhook's message: ${payload.attachments[0].pretext}`);
+                    cy.get('.post__link').should('be.visible').and('have.text', `Commented on sysadmin's message: ${payload.attachments[0].pretext}`);
                     cy.get(`#postMessageText_${replyMessageId}`).should('be.visible').and('have.text', 'Reply to webhook');
                 });
 
@@ -544,7 +537,7 @@ describe('Interactive Menu', () => {
             longUsername = `name-of-64-abcdefghijklmnopqrstuvwxyz-123456789-${Date.now()}`;
 
             // # Create a new user with 64 chars length
-            cy.createNewUser({username: longUsername}, [teamId]).then((user) => {
+            cy.apiCreateNewUser({username: longUsername}, [teamId]).then((user) => {
                 cy.visit(`/ad-1/channels/${channel.name}`);
                 cy.apiAddUserToChannel(channel.id, user.id);
 

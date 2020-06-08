@@ -119,7 +119,7 @@ class TeamGroupsManageModal extends React.PureComponent {
                     height='32'
                 />
                 <div className='more-modal__details'>
-                    <div className='more-modal__name'>{item.display_name} {'-'} &nbsp;
+                    <div className='more-modal__name'>{item.display_name} {'-'} {'&nbsp;'}
                         <span className='more-modal__name_count'>
                             <FormattedMessage
                                 id='numMembers'
@@ -144,7 +144,7 @@ class TeamGroupsManageModal extends React.PureComponent {
                         </button>
                         <Menu
                             openLeft={true}
-                            ariaLabel={Utils.localizeMessage('team_members_dropdown.menuAriaLabel', 'Team member role change')}
+                            ariaLabel={Utils.localizeMessage('team_members_dropdown.menuAriaLabel', 'Change the role of a team member')}
                         >
                             <Menu.ItemAction
                                 show={!item.scheme_admin}
