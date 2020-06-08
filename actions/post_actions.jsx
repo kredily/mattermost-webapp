@@ -113,12 +113,14 @@ export function createPost(post, files) {
 }
 
 export function storeDraft(channelId, draft) {
+    return true;
     return (dispatch) => {
         dispatch(StorageActions.setGlobalItem('draft_' + channelId, draft));
     };
 }
 
 export function storeCommentDraft(rootPostId, draft) {
+    return true;
     return (dispatch) => {
         dispatch(StorageActions.setGlobalItem('comment_draft_' + rootPostId, draft));
     };
