@@ -1,7 +1,6 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import mapKeys from 'lodash.mapkeys';
 import {v4 as uuidv4} from 'uuid';
 
 import messageMenusData from '../fixtures/hooks/message_menus.json';
@@ -56,20 +55,4 @@ export function getMessageMenusPayload({dataSource, options, prefix = Date.now()
     return data;
 }
 
-export function titleCase(str) {
-    const splitStr = str.toLowerCase().split(' ');
-
-    for (let i = 0; i < splitStr.length; i++) {
-        splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
-    }
-
-    return splitStr.join(' ');
-}
-
 export const reUrl = /(https?:\/\/[^ ]*)/;
-
-export function convertKeysToLowercase(obj) {
-    return mapKeys(obj, (_, k) => {
-        return k.toLowerCase();
-    });
-}
